@@ -12,6 +12,9 @@ public class Gate  implements Parcelable{
     private String name;
     private String showName;
 
+    public Gate() {
+    }
+
     public Gate(Parcel source) {
     }
 

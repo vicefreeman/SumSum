@@ -1,11 +1,13 @@
 package com.android.pribo.vice.sumsum;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -24,24 +26,26 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnCompleteListener<Void> {
 
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+
     private enum PendingGeofenceTask {ADD, REMOVE, NONE}
+
     private GeofencingClient mGeofencingClient;
     private ArrayList<Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
@@ -62,30 +66,25 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this , MapsActivity.class);
-
-                startActivity(intent);
+                getSupportFragmentManager().
+                        beginTransaction().
+                        replace(R.id.mainContainer, new GateListFragment()).
+                        addToBackStack("GateListFragment").
+                        commit();
             }
         });
 
         mAuth = FirebaseAuth.getInstance();
-        checkCurrentUser();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.equals(null) || firebaseAuth.getCurrentUser() == null) {
-                    Intent intent = new Intent(MainActivity.this, SignInActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else {
-                    //___________________Geofence_____________________
-                    initWithUser();
-                }
+                checkCurrentUser();
             }
         };
     }
 
-    private void checkCurrentUser(){
+    private void checkCurrentUser() {
         if (FirebaseAuth.getInstance().equals(null) || FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -95,6 +94,15 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             initWithUser();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        addGeofences();
+
+    }
+
     private void initWithUser() {
 
         // Empty list for storing geofences.
@@ -111,20 +119,24 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
 //        addGeofencesButtonHandler();
 
-        chackIfUserHaveGatesList();
+        checkIfUserHaveGatesList();
 
-        //populetGateList__________________________________________________
+        //Add Main gates to the DB
 
         /*FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Gates");
-        Gate g = new Gate(32.149512,35.1092797 ,200, "0543582460", "Nofim", "Nofim Main gate");
+        Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
+        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
+        Gate g3 = new Gate(32.0847061,34.8011774 ,200, "0505978532", "HackerU", "HackerU test");
+        Gate g4 = new Gate(34.8762752,32.2956391 ,200, "0543532447", "Home", "Home Test");
 
-        myRef.child(g.getName()).setValue(g);*/
+        myRef.child(g.getName()).setValue(g);
+        myRef.child(g2.getName()).setValue(g2);
+        myRef.child(g3.getName()).setValue(g3);
+        myRef.child(g4.getName()).setValue(g4);*/
+
     }
 
-    private void chackIfUserHaveGatesList() {
-
-    }
 
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
@@ -141,29 +153,13 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         return builder.build();
     }
 
-    /**
-     * Adds geofences, which sets alerts to be notified when the device enters or exits one of the
-     * specified geofences. Handles the success or failure results returned by addGeofences().
-     */
-    public void addGeofencesButtonHandler() {
-        if (!checkPermissions()) {
-            mPendingGeofenceTask = PendingGeofenceTask.ADD;
-            requestPermissions();
-            return;
-        }
-        addGeofences();
-    }
-
-    /**
-     * Adds geofences. This method should be called after the user has granted the location
-     * permission.
-     */
     @SuppressWarnings("MissingPermission")
     private void addGeofences() {
         if (!checkPermissions()) {
             showSnackbar(getString(R.string.insufficient_permissions));
             return;
         }
+
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
         Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
     }
@@ -176,34 +172,29 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         }
     }
 
-    public void removeGeofencesButtonHandler(View view) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+
         if (!checkPermissions()) {
-            mPendingGeofenceTask = PendingGeofenceTask.REMOVE;
             requestPermissions();
-            return;
+        } else {
+            performPendingGeofenceTask();
         }
-        removeGeofences();
     }
 
-    /**
-     * Removes geofences. This method should be called after the user has granted the location
-     * permission.
-     */
     @SuppressWarnings("MissingPermission")
     private void removeGeofences() {
         if (!checkPermissions()) {
             showSnackbar(getString(R.string.insufficient_permissions));
             return;
-        }else
+        } else
 
             mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
     }
 
-    /**
-     * Runs when the result of calling {@link #addGeofences()} and/or {@link #removeGeofences()}
-     * is available.
-     * @param task the resulting Task, containing either a result or error.
-     */
+
     @Override
     public void onComplete(@NonNull Task<Void> task) {
         mPendingGeofenceTask = PendingGeofenceTask.NONE;
@@ -232,9 +223,12 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
+
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        intent.putExtra("uid", uid);
+        //intent.putExtra("number", )
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
-        // addGeofences() and removeGeofences().
+
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -249,9 +243,10 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                 .child(mAuth.getCurrentUser().getUid().toString()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Double lang = Double.valueOf(postSnapshot.child("lang").getValue().toString());
                     Double lat = Double.valueOf(postSnapshot.child("lat").getValue().toString());
+                    String phoneNumber = postSnapshot.child("phone").getValue().toString();
                     Float distance = Float.valueOf(postSnapshot.child("distance").getValue().toString());
                     Geofence geofence = new Geofence.Builder().setRequestId(postSnapshot.child("name").getValue().toString())
                             .setCircularRegion(lat, lang, distance)
@@ -260,7 +255,12 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                                     Geofence.GEOFENCE_TRANSITION_EXIT)
                             .build();
                     mGeofenceList.add(geofence);
-                    uid = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+                    SharedPreferences preferences = getSharedPreferences("tomer" , Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+
+                    editor.putString(postSnapshot.child("name").getValue().toString(), phoneNumber);
+
+                    editor.apply();
 
                 }
             }
@@ -272,8 +272,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         });
 
 
-
-        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
+        /*for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
 
             mGeofenceList.add(new Geofence.Builder()
                     // Set the request ID of the geofence. This is a string to identify this
@@ -298,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
                     // Create the geofence.
                     .build());
-        }
+        }*/
     }
 
     /**
@@ -445,6 +444,42 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                 mPendingGeofenceTask = PendingGeofenceTask.NONE;
             }
         }
+    }
+
+    public void checkIfUserHaveGatesList(){
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String uid = user.getUid();
+                DatabaseReference userId = FirebaseDatabase.getInstance().getReference("UserGatesList").child(uid);
+                userId.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.hasChildren()) {
+                            getSupportFragmentManager().
+                                    beginTransaction().
+                                    replace(R.id.bottomContainer, new UserGateListFragment()).
+                                    commit();
+
+                        }else {
+
+                            getSupportFragmentManager().
+                                    beginTransaction().
+                                    replace(R.id.bottomContainer, new NoGateFragment()).
+                                    commit();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }}, 1000);
+
     }
 
 }
