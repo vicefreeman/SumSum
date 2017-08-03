@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.android.pribo.vice.sumsum.AddGate">
+
+    <EditText
+        android:id="@+id/etPhoneNum"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Telephone number of the gate..."
+        android:imeOptions="actionSearch"
+        android:inputType="phone"
+
+        android:layout_above="@+id/btnAdd"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/etRadius"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_marginBottom="16dp"
+        android:hint="Radius in Meters"
+        android:inputType="number"
+        android:layout_above="@+id/etPhoneNum"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/btnAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:text="ADD GATE" />
+
+    <EditText
+        android:id="@+id/etGateName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/etRadius"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="16dp"
+        android:ems="10"
+        android:hint="Gate Name.."
+        android:inputType="textPersonName" />
+
+</RelativeLayout>
