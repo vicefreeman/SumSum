@@ -113,7 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapLongClick(LatLng latLng) {
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                Toast.makeText(MapsActivity.this, latLng.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "Cleared all markers", Toast.LENGTH_SHORT).show();
 
                 map.clear();
             }
