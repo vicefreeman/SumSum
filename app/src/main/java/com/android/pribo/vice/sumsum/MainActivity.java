@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.android.pribo.vice.sumsum.Geofence.GeofenceErrorMessages;
 import com.android.pribo.vice.sumsum.Geofence.GeofenceTransitionsIntentService;
-import com.android.pribo.vice.sumsum.Modules.Gate;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -29,8 +28,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private PendingGeofenceTask mPendingGeofenceTask = PendingGeofenceTask.NONE;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private String uid;
 
 
     @Override
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         });
 
         mAuth = FirebaseAuth.getInstance();
+        checkCurrentUser();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -82,6 +85,16 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         };
     }
 
+    private void checkCurrentUser(){
+        if (FirebaseAuth.getInstance().equals(null) || FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            //___________________Geofence_____________________
+            initWithUser();
+        }
+    }
     private void initWithUser() {
 
         // Empty list for storing geofences.
@@ -102,11 +115,11 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
         //populetGateList__________________________________________________
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        /*FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Gates");
         Gate g = new Gate(32.149512,35.1092797 ,200, "0543582460", "Nofim", "Nofim Main gate");
 
-        myRef.child(g.getName()).setValue(g);
+        myRef.child(g.getName()).setValue(g);*/
     }
 
     private void chackIfUserHaveGatesList() {
@@ -230,6 +243,36 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
      * the user's location.
      */
     private void populateGeofenceList() {
+
+
+        FirebaseDatabase.getInstance().getReference("UserGatesList")
+                .child(mAuth.getCurrentUser().getUid().toString()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    Double lang = Double.valueOf(postSnapshot.child("lang").getValue().toString());
+                    Double lat = Double.valueOf(postSnapshot.child("lat").getValue().toString());
+                    Float distance = Float.valueOf(postSnapshot.child("distance").getValue().toString());
+                    Geofence geofence = new Geofence.Builder().setRequestId(postSnapshot.child("name").getValue().toString())
+                            .setCircularRegion(lat, lang, distance)
+                            .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                    Geofence.GEOFENCE_TRANSITION_EXIT)
+                            .build();
+                    mGeofenceList.add(geofence);
+                    uid = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
         for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
 
             mGeofenceList.add(new Geofence.Builder()
