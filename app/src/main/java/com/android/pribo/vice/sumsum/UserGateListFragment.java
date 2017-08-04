@@ -28,6 +28,7 @@ import butterknife.Unbinder;
 
 
 public class UserGateListFragment extends Fragment {
+
     @BindView(R.id.rvUserGateList)
     RecyclerView rvUserLists;
     Unbinder unbinder;

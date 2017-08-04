@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -33,7 +34,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 
-
 public class GateListFragment extends Fragment {
 
     @BindView(R.id.btnAddPrivetGate)
@@ -41,7 +41,8 @@ public class GateListFragment extends Fragment {
     @BindView(R.id.rvGateList)
     RecyclerView rvGateList;
     Unbinder unbinder;
-
+    @BindView(R.id.fabToHome)
+    FloatingActionButton fabToHome;
 
 
     public GateListFragment() {
@@ -66,6 +67,17 @@ public class GateListFragment extends Fragment {
         rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvGateList.setAdapter(new GateListAdapter(ref, this));
 
+
+        fabToHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                getContext().startActivity(intent);
+
+            }
+        });
+
         return view;
     }
 
@@ -82,6 +94,10 @@ public class GateListFragment extends Fragment {
         startActivity(intent);
     }
 
+    @OnClick(R.id.fabToHome)
+    public void onViewClicked() {
+    }
+
     public static class GateListAdapter extends FirebaseRecyclerAdapter<Gate, GateListAdapter.GateListViewHolder> {
         Fragment fragment;
         Context context;
@@ -89,8 +105,6 @@ public class GateListFragment extends Fragment {
         AlertDialog n;
         FragmentManager manager;
         private FragmentActivity myContext = (FragmentActivity) context;
-
-
 
 
         public GateListAdapter(Query query, Fragment fragment) {
@@ -101,7 +115,7 @@ public class GateListFragment extends Fragment {
 
         @Override
         public GateListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            GateListViewHolder vh =  super.onCreateViewHolder(parent, viewType);
+            GateListViewHolder vh = super.onCreateViewHolder(parent, viewType);
             vh.gateListFragment = fragment;
             context = parent.getContext();
 
@@ -131,7 +145,7 @@ public class GateListFragment extends Fragment {
                             .setNegativeButton("Done", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                  Intent intent = new Intent(context , MainActivity.class);
+                                    Intent intent = new Intent(context, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     context.startActivity(intent);
 
@@ -176,8 +190,7 @@ public class GateListFragment extends Fragment {
                     try {
                         int adapterPosition = getAdapterPosition();
 
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
