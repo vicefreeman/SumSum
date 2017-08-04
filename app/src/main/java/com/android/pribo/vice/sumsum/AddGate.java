@@ -25,6 +25,10 @@ public class AddGate extends Fragment {
     Button btnAdd;
     @BindView(R.id.etGateName)
     EditText etGateName;
+    String lat;
+    String lng;
+    String phone;
+    String name;
 
     public AddGate() {
         // Required empty public constructor
@@ -60,5 +64,6 @@ public class AddGate extends Fragment {
 
     @OnClick(R.id.btnAdd)
     public void onViewClicked() {
+
     }
 }

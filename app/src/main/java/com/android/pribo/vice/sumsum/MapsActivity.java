@@ -23,6 +23,9 @@ import com.google.android.gms.tasks.Task;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+
+
+
     FusedLocationProviderClient client;
 
     @Override
@@ -42,7 +45,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //tell me when the map is loaded
         mapFragment.getMapAsync(this);
         //client = LocationServices.getFusedLocationProviderClient(this);
+
     }
+
+
 
     @Override
     public void onStart() {
@@ -78,6 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .strokeWidth(8).clickable(true);
 
                 Circle mCircle;
+
 
                 mCircle = map.addCircle(circleOptions);
 
@@ -155,4 +162,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return true;
     }
+
 }
