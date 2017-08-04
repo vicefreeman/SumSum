@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Hello! you should add some gates to your list "
+        android:text="You should add some gates to your list "
         android:textColor="#000000"
         android:textSize="30sp"
         android:textStyle="bold" />

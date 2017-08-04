@@ -461,6 +461,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                         if (snapshot.hasChildren()) {
                             getSupportFragmentManager().
                                     beginTransaction().
+                                    replace(R.id.topContainer , new GreetingFragment()).
                                     replace(R.id.bottomContainer, new UserGateListFragment()).
                                     commit();
 
@@ -468,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
                             getSupportFragmentManager().
                                     beginTransaction().
+                                    replace(R.id.topContainer , new GreetingFragment()).
                                     replace(R.id.bottomContainer, new NoGateFragment()).
                                     commit();
                         }
