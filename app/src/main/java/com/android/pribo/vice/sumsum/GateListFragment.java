@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,12 +36,13 @@ import butterknife.Unbinder;
 
 public class GateListFragment extends Fragment {
 
-
     @BindView(R.id.btnAddPrivetGate)
     Button btnAddPrivetGate;
     @BindView(R.id.rvGateList)
     RecyclerView rvGateList;
     Unbinder unbinder;
+
+
 
     public GateListFragment() {
         // Required empty public constructor
@@ -84,6 +87,10 @@ public class GateListFragment extends Fragment {
         Context context;
         private String gateName = null;
         AlertDialog n;
+        FragmentManager manager;
+        private FragmentActivity myContext = (FragmentActivity) context;
+
+
 
 
         public GateListAdapter(Query query, Fragment fragment) {
@@ -97,8 +104,10 @@ public class GateListFragment extends Fragment {
             GateListViewHolder vh =  super.onCreateViewHolder(parent, viewType);
             vh.gateListFragment = fragment;
             context = parent.getContext();
+
             return vh;
         }
+
 
         @Override
         protected void populateViewHolder(final GateListViewHolder viewHolder, final Gate model, final int position) {
@@ -122,7 +131,9 @@ public class GateListFragment extends Fragment {
                             .setNegativeButton("Done", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    n.dismiss();
+                                  Intent intent = new Intent(context , MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    context.startActivity(intent);
 
                                 }
                             })
@@ -132,6 +143,10 @@ public class GateListFragment extends Fragment {
             });
             viewHolder.model = model;
 
+
+        }
+
+        private void showMyList() {
 
         }
 

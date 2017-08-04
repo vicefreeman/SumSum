@@ -483,5 +483,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             }}, 1000);
 
     }
+    public void replaceFragment(){
+        Toast.makeText(this, "MainActivity!!!", Toast.LENGTH_SHORT).show();
+    }
 
 }
