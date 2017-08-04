@@ -97,7 +97,7 @@ public class UserGateListFragment extends Fragment {
                     gateName = viewHolder.tvUserGateName.getText().toString();
                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     DatabaseReference userList = FirebaseDatabase.getInstance().getReference("UserGatesList").child(uid).child(gateName);
-                    //TODO delet gate from user
+                   userList.removeValue();
                 }
             });
             viewHolder.model = model;
