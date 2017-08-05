@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +44,10 @@ public class GateListFragment extends Fragment {
     Unbinder unbinder;
     @BindView(R.id.fabToHome)
     FloatingActionButton fabToHome;
+    @BindView(R.id.etSearch)
+    EditText etSearch;
+    @BindView(R.id.searchFab)
+    FloatingActionButton searchFab;
 
 
     public GateListFragment() {
@@ -74,7 +79,6 @@ public class GateListFragment extends Fragment {
                 Intent intent = new Intent(getContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 getContext().startActivity(intent);
-
             }
         });
 
@@ -96,6 +100,19 @@ public class GateListFragment extends Fragment {
 
     @OnClick(R.id.fabToHome)
     public void onViewClicked() {
+
+    }
+
+    @OnClick(R.id.searchFab)
+    public void onSerchFabClicked() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Gates");
+        String searchText = etSearch.getText().toString();
+
+        if (searchText.isEmpty()){
+          etSearch.setError("Search field is empty");
+      }else{
+
+      }
     }
 
     public static class GateListAdapter extends FirebaseRecyclerAdapter<Gate, GateListAdapter.GateListViewHolder> {

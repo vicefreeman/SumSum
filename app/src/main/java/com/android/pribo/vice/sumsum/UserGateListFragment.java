@@ -1,8 +1,10 @@
 package com.android.pribo.vice.sumsum;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -70,6 +72,7 @@ public class UserGateListFragment extends Fragment {
         Fragment fragment;
         Context context;
         private String gateName = null;
+        AlertDialog dialog;
 
 
 
@@ -97,8 +100,29 @@ public class UserGateListFragment extends Fragment {
                 public void onClick(View view) {
                     gateName = viewHolder.tvUserGateName.getText().toString();
                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    DatabaseReference userList = FirebaseDatabase.getInstance().getReference("UserGatesList").child(uid).child(gateName);
-                   userList.removeValue();
+                    final DatabaseReference userList = FirebaseDatabase.getInstance().getReference("UserGatesList").child(uid).child(gateName);
+
+
+                    dialog = new AlertDialog.Builder(context)
+                            .setTitle("Delete Gate")
+                            .setMessage("Are you sure you want to delete" + gateName + " from your list?")
+                            .setPositiveButton("Yes please", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    userList.removeValue();
+                                    dialog.dismiss();
+
+                                }
+                            }).setCancelable(false).setIcon(R.drawable.ic_alert_attention)
+                            .setNegativeButton("No , I changed my mind", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialog.dismiss();
+
+                                }
+                            })
+                            .create();
+                    dialog.show();
                 }
             });
             viewHolder.model = model;
