@@ -13,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -74,13 +75,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(final LatLng latLng) {
 
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
                 Toast.makeText(MapsActivity.this, latLng.toString(), Toast.LENGTH_SHORT).show();
 
                 final CircleOptions circleOptions = new CircleOptions()
                         .center(latLng)
                         .radius(200)
-                        .strokeColor(Color.GREEN)
+                        .strokeColor(Color.YELLOW)
+                        .fillColor(Color.argb(100 , 0  , 188 , 212))
                         .strokeWidth(8).clickable(true);
 
                 Circle mCircle;
@@ -92,6 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 map.addMarker(new MarkerOptions()
                         .position(latLng)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
                         .draggable(true));
 
 
@@ -119,7 +122,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                 Toast.makeText(MapsActivity.this, "Cleared all markers", Toast.LENGTH_SHORT).show();
 
                 map.clear();
