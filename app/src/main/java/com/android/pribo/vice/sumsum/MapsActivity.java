@@ -2,7 +2,6 @@ package com.android.pribo.vice.sumsum;
 
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -13,12 +12,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.Task;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -74,13 +73,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(final LatLng latLng) {
 
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+
+
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
                 Toast.makeText(MapsActivity.this, latLng.toString(), Toast.LENGTH_SHORT).show();
 
                 final CircleOptions circleOptions = new CircleOptions()
                         .center(latLng)
                         .radius(200)
-                        .strokeColor(Color.GREEN)
+                        .strokeColor(Color.YELLOW)
+                        .fillColor(Color.argb(50 ,0 , 188 , 212))
                         .strokeWidth(8).clickable(true);
 
                 Circle mCircle;
@@ -90,7 +92,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 final Circle finalMCircle = mCircle;
 
-                map.addMarker(new MarkerOptions()
+                MarkerOptions markerOptions = new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                map.addMarker(markerOptions
                         .position(latLng)
                         .draggable(true));
 
@@ -135,20 +138,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             map.setMyLocationEnabled(true);
     }
 
-
-    private void addMarker(GoogleMap map) {
-
-        if (!checkLocationPermission()) return;
-
-        Task<Location> task = client.getLastLocation();
-        Location location = task.getResult();
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-
-        map.addMarker(new MarkerOptions().position(latLng));
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
-    }
 
     private boolean checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this,
