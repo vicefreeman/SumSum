@@ -38,12 +38,12 @@
 
         <Button
             android:id="@+id/btnDeleteGate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="DELETE"
+            android:background="@drawable/btndelete"
             android:onClick="onClickDeleteGateToUserList"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"

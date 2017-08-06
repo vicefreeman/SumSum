@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -14,13 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.pribo.vice.sumsum.Modules.Gate;
@@ -39,19 +36,19 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 
-public class GateListFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class GateListFragment extends Fragment {
 
     @BindView(R.id.btnAddPrivetGate)
     Button btnAddPrivetGate;
     @BindView(R.id.rvGateList)
     RecyclerView rvGateList;
     Unbinder unbinder;
-    @BindView(R.id.fabToHome)
-    FloatingActionButton fabToHome;
     @BindView(R.id.etSearch)
     EditText etSearch;
-    @BindView(R.id.searchFab)
-    FloatingActionButton searchFab;
+    @BindView(R.id.btnSearch)
+    Button btnSearch;
+    @BindView(R.id.backBtn)
+    Button backBtn;
 
 
     public GateListFragment() {
@@ -77,15 +74,6 @@ public class GateListFragment extends Fragment implements SearchView.OnQueryText
         rvGateList.setAdapter(new GateListAdapter(ref, this));
 
 
-        fabToHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                getContext().startActivity(intent);
-            }
-        });
-
         return view;
     }
 
@@ -103,44 +91,29 @@ public class GateListFragment extends Fragment implements SearchView.OnQueryText
         startActivity(intent);
     }
 
-    @OnClick(R.id.fabToHome)
-    public void onViewClicked() {
-
+    @OnClick(R.id.backBtn)
+    public void onBckBtnClicked() {
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        getContext().startActivity(intent);
     }
 
-    @OnClick(R.id.searchFab)
-    public void onSearchFabClicked() {
+
+    @OnClick(R.id.btnSearch)
+    public void onSearchBtnClicked() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Gates");
         String searchText = etSearch.getText().toString();
 
-        if (searchText.isEmpty()){
-          etSearch.setError("Search field is empty");
-      }else{
+        if (searchText.isEmpty()) {
+            etSearch.setError("Search field is empty");
+        } else {
 
-      }
+        }
     }
 
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem menuItem) {
-        return false;
-    }
 
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-        return false;
-    }
 
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s) {
-        return false;
-    }
-
-    public static class GateListAdapter extends FirebaseRecyclerAdapter<Gate, GateListAdapter.GateListViewHolder>{
+    public static class GateListAdapter extends FirebaseRecyclerAdapter<Gate, GateListAdapter.GateListViewHolder> {
         Fragment fragment;
         Context context;
         private String gateName = null;
