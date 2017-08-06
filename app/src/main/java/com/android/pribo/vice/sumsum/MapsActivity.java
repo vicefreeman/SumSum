@@ -1,13 +1,20 @@
 package com.android.pribo.vice.sumsum;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.pribo.vice.sumsum.Modules.Gate;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,10 +26,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    Double lat;
+    Double lng;
+    Double radius = 22.0;
 
 
 
@@ -76,13 +89,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
                 Toast.makeText(MapsActivity.this, latLng.toString(), Toast.LENGTH_SHORT).show();
-
+                lat = latLng.latitude;
+                lng = latLng.longitude;
                 final CircleOptions circleOptions = new CircleOptions()
                         .center(latLng)
-                        .radius(200)
+                        .radius(radius)
                         .strokeColor(Color.GREEN)
                         .strokeWidth(8).clickable(true);
-
+                SharedPreferences preferences = getSharedPreferences("data", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("lat",String.valueOf(lat));
+                editor.putString("lng",String.valueOf(lng));
+                editor.commit();
                 Circle mCircle;
 
 
