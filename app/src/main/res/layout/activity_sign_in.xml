@@ -8,11 +8,11 @@
 
     <Button
         android:id="@+id/btnSignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="19dp"
         android:layout_marginRight="16dp"
-        android:text="Enter"
+        android:background="@drawable/btnenter"
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1"
