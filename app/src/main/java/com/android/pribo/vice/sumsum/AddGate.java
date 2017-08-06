@@ -59,7 +59,6 @@ public class AddGate extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
-
     @Override
     public void onResume() {
         super.onResume();
