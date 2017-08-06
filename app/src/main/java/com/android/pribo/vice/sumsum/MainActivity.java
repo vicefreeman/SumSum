@@ -465,10 +465,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
     public void checkIfUserHaveGatesList(){
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable(){
-            @Override
-            public void run() {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = user.getUid();
                 DatabaseReference userId = FirebaseDatabase.getInstance().getReference("UserGatesList").child(uid);
@@ -497,11 +493,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
                     }
                 });
-            }}, 1000);
 
     }
-    public void replaceFragment(){
-        Toast.makeText(this, "MainActivity!!!", Toast.LENGTH_SHORT).show();
-    }
-
 }

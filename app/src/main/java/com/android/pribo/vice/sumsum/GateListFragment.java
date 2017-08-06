@@ -7,20 +7,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.pribo.vice.sumsum.Modules.Gate;
@@ -31,15 +29,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
 
-public class GateListFragment extends Fragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+public class GateListFragment extends Fragment {
 
     @BindView(R.id.btnAddPrivetGate)
     Button btnAddPrivetGate;
@@ -71,8 +67,8 @@ public class GateListFragment extends Fragment implements SearchView.OnQueryText
             Log.e("SumSum", "Null user");
             return view;
         }
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Gates"); //TODO: Handle nulls
-
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Gates");
+        //TODO: Handle nulls
         rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvGateList.setAdapter(new GateListAdapter(ref, this));
 
@@ -86,6 +82,31 @@ public class GateListFragment extends Fragment implements SearchView.OnQueryText
             }
         });
 
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length()>0) {
+                    String s1 = String.valueOf(charSequence.charAt(0)).toUpperCase();
+                    String s = charSequence.subSequence(1, charSequence.length()).toString().toLowerCase();
+                    Query query = FirebaseDatabase.getInstance().getReference("Gates").orderByChild("name").startAt(s1 + s);
+                    rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
+                    rvGateList.setAdapter(new GateListAdapter(query, getParentFragment()));
+
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+
+            }
+        });
         return view;
     }
 
@@ -108,48 +129,12 @@ public class GateListFragment extends Fragment implements SearchView.OnQueryText
 
     }
 
-    @OnClick(R.id.searchFab)
-    public void onSearchFabClicked() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Gates");
-        String searchText = etSearch.getText().toString();
 
-        if (searchText.isEmpty()){
-          etSearch.setError("Search field is empty");
-      }else{
-
-      }
-    }
-
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem menuItem) {
-        return false;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s) {
-        return false;
-    }
-
-    public static class GateListAdapter extends FirebaseRecyclerAdapter<Gate, GateListAdapter.GateListViewHolder>{
+    public static class GateListAdapter extends FirebaseRecyclerAdapter<Gate, GateListAdapter.GateListViewHolder> {
         Fragment fragment;
         Context context;
         private String gateName = null;
         AlertDialog n;
-        FragmentManager manager;
-        private FragmentActivity myContext = (FragmentActivity) context;
-
-        private List<Gate> mArrayList;
-        private List<Gate> mFilteredList;
 
 
         public GateListAdapter(Query query, Fragment fragment) {
@@ -163,7 +148,6 @@ public class GateListFragment extends Fragment implements SearchView.OnQueryText
             GateListViewHolder vh = super.onCreateViewHolder(parent, viewType);
             vh.gateListFragment = fragment;
             context = parent.getContext();
-
             return vh;
         }
 

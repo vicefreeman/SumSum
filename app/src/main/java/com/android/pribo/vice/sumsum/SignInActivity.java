@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,26 +37,29 @@ public class SignInActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnSignIn)
     public void onEnterClicked() {
+        if (etUserName.getText().equals("")) {
+            Toast.makeText(this, "User name cant be empty", Toast.LENGTH_LONG).show();
+        } else {
+            FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener(this,
+                    new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                //FirebaseUser us = FirebaseAuth.getInstance().getCurrentUser();
+                                FirebaseUser user = task.getResult().getUser();
+                                //ref the database
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+                                //setValue
+                                ref.setValue(etUserName.getText().toString());
 
-        FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener(this,
-                new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            //FirebaseUser us = FirebaseAuth.getInstance().getCurrentUser();
-                            FirebaseUser user = task.getResult().getUser();
-                            //ref the database
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
-                            //setValue
-                            ref.setValue(etUserName.getText().toString());
-
-                            Intent intent = new Intent(SignInActivity.this /*context*/, MainActivity.class);
-                            //new Task (No Activities in the new task)
-                            //clear task  (deletes the former stack of activities)
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                                Intent intent = new Intent(SignInActivity.this /*context*/, MainActivity.class);
+                                //new Task (No Activities in the new task)
+                                //clear task  (deletes the former stack of activities)
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 }

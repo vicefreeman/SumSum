@@ -72,7 +72,7 @@ public class AddGate extends Fragment {
     @OnClick(R.id.btnAdd)
     public void onViewClicked() {
         SharedPreferences sharedPreferences = activity.getSharedPreferences("data", Context.MODE_PRIVATE);
-        String lan = sharedPreferences.getString("lat", "");
+        String lat = sharedPreferences.getString("lat", "");
         String lng = sharedPreferences.getString("lng", "");
         String gatePhone = etPhoneNum.getText().toString();
         String gateName = etGateName.getText().toString();
@@ -83,7 +83,7 @@ public class AddGate extends Fragment {
         if (gateName.equals("") || gatePhone.equals("") || radius.equals("")) {
             Toast.makeText(getContext(), "gate data is missing", Toast.LENGTH_LONG).show();
         } else {
-            Gate g = new Gate(Double.valueOf(lan), Double.valueOf(lng), Integer.valueOf(radius), gatePhone, gateName, gateName);
+            Gate g = new Gate(Double.valueOf(lat), Double.valueOf(lng), Integer.valueOf(radius), gatePhone, gateName, gateName);
             userGatesList.setValue(g);
             etRadius.setText("");
             etGateName.setText("");
