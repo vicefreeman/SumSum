@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
@@ -40,11 +41,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements OnCompleteListener<Void> {
+public class MainActivity extends AppCompatActivity implements OnCompleteListener<Void>{
 
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    private FloatingActionButton fab;
 
     private enum PendingGeofenceTask {ADD, REMOVE, NONE}
 
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         };
     }
 
+
+
     private void checkCurrentUser() {
         if (FirebaseAuth.getInstance().equals(null) || FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
@@ -99,10 +103,19 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         }
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
+        fab.show();
         addGeofences();
 
     }
