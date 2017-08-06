@@ -96,7 +96,7 @@ public class GateListFragment extends Fragment {
                     Query query = FirebaseDatabase.getInstance().getReference("Gates").orderByChild("name").startAt(s1 + s);
                     rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
                     rvGateList.setAdapter(new GateListAdapter(query, getParentFragment()));
-
+//
                 }
 
             }
