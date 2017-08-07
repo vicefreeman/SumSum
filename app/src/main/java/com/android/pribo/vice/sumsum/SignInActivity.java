@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -37,8 +36,10 @@ public class SignInActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnSignIn)
     public void onEnterClicked() {
-        if (etUserName.getText().equals("")) {
-            Toast.makeText(this, "User name cant be empty", Toast.LENGTH_LONG).show();
+        if (etUserName.getText().toString().isEmpty()) {
+            etUserName.setError("You didn't enter your name");
+        }else if (etUserName.getText().toString().length() < 3){
+            etUserName.setError("Name Should contain et least 3 letters");
         } else {
             FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener(this,
                     new OnCompleteListener<AuthResult>() {
