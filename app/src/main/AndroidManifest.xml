@@ -14,7 +14,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/mainlogo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -22,7 +22,6 @@
         <service android:name=".Geofence.GeofenceTransitionsIntentService"/>
         <activity
             android:name=".MainActivity"
-            android:icon="@drawable/barlogo"
             android:label="Sum Sum"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -37,7 +36,6 @@
         <activity
             android:name=".SignInActivity"
             android:label="Sign in to Sum Sum"
-            android:icon="@drawable/barlogo"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
         <!--
