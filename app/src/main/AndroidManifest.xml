@@ -22,7 +22,8 @@
         <service android:name=".Geofence.GeofenceTransitionsIntentService"/>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:icon="@drawable/barlogo"
+            android:label="Sum Sum"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -35,7 +36,8 @@
 
         <activity
             android:name=".SignInActivity"
-            android:label="@string/title_activity_sign_in"
+            android:label="Sign in to Sum Sum"
+            android:icon="@drawable/barlogo"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
         <!--
@@ -55,8 +57,10 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"></activity>
+            android:label="Create a custom Gate"
+            android:icon="@drawable/barlogo"
+            android:screenOrientation="portrait"
+         ></activity>
 
     </application>
 
