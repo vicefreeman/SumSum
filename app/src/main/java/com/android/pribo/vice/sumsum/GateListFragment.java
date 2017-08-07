@@ -93,9 +93,7 @@ public class GateListFragment extends Fragment {
 
     @OnClick(R.id.backBtn)
     public void onBckBtnClicked() {
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        getContext().startActivity(intent);
+        getActivity().onBackPressed();
     }
 
 

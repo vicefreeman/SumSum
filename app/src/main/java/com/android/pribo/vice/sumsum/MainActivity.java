@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
-    private FloatingActionButton fab;
+
 
     private enum PendingGeofenceTask {ADD, REMOVE, NONE}
 
@@ -64,20 +63,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getSupportFragmentManager().
-                        beginTransaction().
-                        replace(R.id.mainContainer, new GateListFragment()).
-                        addToBackStack("GateListFragment").
-                        commit();
-
-                fab.hide();
-            }
-        });
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -114,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        fab.show();
-        checkIfUserHaveGatesList();
         addGeofences();
 
     }

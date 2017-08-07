@@ -37,6 +37,8 @@ public class UserGateListFragment extends Fragment {
     Unbinder unbinder;
     String s;
 
+    Button btnAddAnother;
+
 
     public UserGateListFragment() {
         // Required empty public constructor
@@ -59,19 +61,23 @@ public class UserGateListFragment extends Fragment {
         rvUserLists.setLayoutManager(new LinearLayoutManager(getContext()));
         rvUserLists.setAdapter(new UserGateListFragment.UserGateListAdapter(ref, this));
 
+        btnAddAnother = (Button) view.findViewById(R.id.btnAddAnotherGate);
+
+        btnAddAnother.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new GateListFragment()).commit();
+
+            }
+        });
         return view;
 
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-    }
-
-    public void restartactivity(){
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        getContext().startActivity(intent);
     }
 
     //2)FirebaseRecyclerAdapter
@@ -155,12 +161,15 @@ public class UserGateListFragment extends Fragment {
             Fragment userGateListFragment;
             Gate model;
 
+
+
             //Constructor:
             public UserGateListViewHolder(View itemView) {
                 super(itemView);
                 ivUserGateProfile = (ImageView) this.itemView.findViewById(R.id.ivUserGateProfile);
                 tvUserGateName = (TextView) this.itemView.findViewById(R.id.tvUserGateName);
                 btnDeleteGate = (Button) this.itemView.findViewById(R.id.btnDeleteGate);
+
                 itemView.setOnClickListener(this);
             }
 

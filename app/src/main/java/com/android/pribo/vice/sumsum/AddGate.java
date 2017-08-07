@@ -39,6 +39,7 @@ public class AddGate extends Fragment {
     Activity activity;
 
 
+    Button btnBack;
     public AddGate() {
         // Required empty public constructor
     }
@@ -51,6 +52,15 @@ public class AddGate extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_gate, container, false);
         unbinder = ButterKnife.bind(this, view);
         activity = getActivity();
+
+        btnBack = (Button) view.findViewById(R.id.backBtn);
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
         return view;
     }
 
