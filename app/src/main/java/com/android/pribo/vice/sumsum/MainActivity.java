@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -116,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     public void onBackPressed() {
         super.onBackPressed();
         fab.show();
+        checkIfUserHaveGatesList();
         addGeofences();
 
     }

@@ -2,6 +2,7 @@ package com.android.pribo.vice.sumsum;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -67,12 +68,19 @@ public class UserGateListFragment extends Fragment {
         unbinder.unbind();
     }
 
+    public void restartactivity(){
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        getContext().startActivity(intent);
+    }
+
     //2)FirebaseRecyclerAdapter
     public static class UserGateListAdapter extends FirebaseRecyclerAdapter<Gate, UserGateListAdapter.UserGateListViewHolder> {
         Fragment fragment;
         Context context;
         private String gateName = null;
         AlertDialog dialog;
+
 
 
 
@@ -110,7 +118,12 @@ public class UserGateListFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     userList.removeValue();
+
                                     dialog.dismiss();
+
+                                    Intent intent = new Intent(context, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    context.startActivity(intent);
 
                                 }
                             }).setCancelable(false).setIcon(R.drawable.ic_alert_attention)
@@ -129,6 +142,7 @@ public class UserGateListFragment extends Fragment {
 
 
         }
+
 
         //1)ViewHolder
         public static class UserGateListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

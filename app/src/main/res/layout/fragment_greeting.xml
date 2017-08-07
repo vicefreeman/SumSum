@@ -7,6 +7,7 @@
     <TextView
         android:id="@+id/tvUserGreeting"
         android:text="Hello!"
+        android:layout_margin="16dp"
         android:textSize="35sp"
         android:textStyle="bold"
         android:gravity="center_horizontal"
