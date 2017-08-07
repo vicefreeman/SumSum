@@ -31,7 +31,7 @@
     <Button
         android:id="@+id/btnSignIn"
         android:layout_width="110dp"
-        android:layout_height="42dp"
+        android:layout_height="48dp"
         android:background="@drawable/btnenter"
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintRight_creator="1"
@@ -49,9 +49,11 @@
         android:id="@+id/etUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="12"
+        android:ems="14"
         android:hint="Your name"
-        android:layout_marginTop="16dp"
+        android:textSize="20dp"
+        android:padding="8dp"
+        android:background="@drawable/edittextstyle"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/btnSignIn"
         app:layout_constraintHorizontal_bias="0.0"
@@ -62,28 +64,29 @@
         android:layout_centerHorizontal="true" />
 
 
-
-
     <TextView
         android:id="@+id/tvGreeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="monospace"
+        android:fontFamily="sans-serif-condensed"
         android:gravity="center"
+        android:padding="5dp"
         android:text="Please log in to access your gates"
         android:textColor="#000000"
         android:textSize="18sp"
-        tools:layout_editor_absoluteY="341dp"
+
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_below="@+id/tvWelcome"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="22dp" />
 
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_marginTop="16dp"
         android:text="Welcome!"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed"
         android:textSize="35sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
