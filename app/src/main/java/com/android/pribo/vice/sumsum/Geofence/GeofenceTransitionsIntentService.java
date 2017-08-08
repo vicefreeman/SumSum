@@ -1,5 +1,6 @@
 package com.android.pribo.vice.sumsum.Geofence;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -34,6 +35,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     private static final String TAG = "GeofenceTransitionsIS";
     SharedPreferences shared;
+
     String phoneNumber;
 
     /**
@@ -52,12 +54,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceErrorMessages.getErrorString(this,
                     geofencingEvent.getErrorCode());
             Log.e(TAG, errorMessage);
-            shared = getSharedPreferences("tomer" , Context.MODE_PRIVATE);
+            shared = getSharedPreferences("shared" ,Context.MODE_PRIVATE);
             return;
         }
 
@@ -104,8 +107,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
 
         for (int i = 0; i <triggeringGeofencesIdsList.size() ; i++) {
-            String check = shared.getString(triggeringGeofencesIdsList.get(i), "lll");
-            if (!check.equals("lll")){
+            String check = "lll";
+            check = shared.getString(triggeringGeofencesIdsList.get(i), "lll");
+            if (!check.equals("lll") ){
                 phoneNumber = check;
                 break;
             }

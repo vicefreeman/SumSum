@@ -1,5 +1,6 @@
 package com.android.pribo.vice.sumsum;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    Activity activity;
 
     public void sedMail(View view) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        activity = this;
 
         getSupportActionBar().setIcon(R.drawable.barlogo);
 
@@ -167,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         myRef.child(g4.getName()).setValue(g4);*/
 
     }
-
 
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
@@ -281,8 +282,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                                     Geofence.GEOFENCE_TRANSITION_EXIT)
                             .build();
                     mGeofenceList.add(geofence);
-                    SharedPreferences preferences = getSharedPreferences("tomer" , Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
+                    SharedPreferences sharedPref = activity.getSharedPreferences("shared" ,Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
 
                     editor.putString(postSnapshot.child("name").getValue().toString(), phoneNumber);
 
