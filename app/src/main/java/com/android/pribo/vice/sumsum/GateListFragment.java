@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +74,29 @@ public class GateListFragment extends Fragment {
 
         rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvGateList.setAdapter(new GateListAdapter(ref, this));
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    String s = String.valueOf(charSequence.charAt(0)).toUpperCase();
+                    String s1 = charSequence.subSequence(1, charSequence.length()).toString().toLowerCase();
+                    Query gates = FirebaseDatabase.getInstance().getReference("Gates").orderByKey().startAt(s + s1);//TODO: Handle nulls
+
+                    rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
+                    rvGateList.setAdapter(new GateListAdapter(gates, getTargetFragment()));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         return view;
     }
@@ -100,13 +124,17 @@ public class GateListFragment extends Fragment {
 
     @OnClick(R.id.btnSearch)
     public void onSearchBtnClicked() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Gates");
         String searchText = etSearch.getText().toString();
 
         if (searchText.isEmpty()) {
             etSearch.setError("Search field is empty");
         } else {
+            String s = String.valueOf(searchText.charAt(0));
+            String s1 = searchText.subSequence(1, searchText.length()).toString().toLowerCase();
+            Query gates = FirebaseDatabase.getInstance().getReference("Gates").orderByKey().startAt(s + s1);//TODO: Handle nulls
 
+            rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
+            rvGateList.setAdapter(new GateListAdapter(gates, getTargetFragment()));
         }
     }
 

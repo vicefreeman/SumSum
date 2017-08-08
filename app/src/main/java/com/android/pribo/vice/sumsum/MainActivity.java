@@ -15,7 +15,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -45,6 +47,24 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
+    public void sedMail(View view) {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","hidayeichler@gmail.com", null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
+        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+        Intent n = new Intent(this, MapsActivity.class);
+        startActivity(n);
+    }
+
+    public void moveToContect(MenuItem item) {
+        getSupportFragmentManager().
+                beginTransaction().
+                replace(R.id.mainContainer, new ContectFragment()).
+                commit();
+
+    }
+
 
     private enum PendingGeofenceTask {ADD, REMOVE, NONE}
 
@@ -64,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         getSupportActionBar().setIcon(R.drawable.barlogo);
 
         mAuth = FirebaseAuth.getInstance();
@@ -76,9 +97,16 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         };
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
 
 
     private void checkCurrentUser() {
+
         if (FirebaseAuth.getInstance().equals(null) || FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -159,12 +187,12 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     @SuppressWarnings("MissingPermission")
     private void addGeofences() {
         if (!checkPermissions()) {
-            showSnackbar(getString(R.string.insufficient_permissions));
-            return;
-        }
+            requestPermissions();
+        } else {
 
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
         Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -180,11 +208,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
 
-        if (!checkPermissions()) {
-            requestPermissions();
-        } else {
-            performPendingGeofenceTask();
-        }
     }
 
     @SuppressWarnings("MissingPermission")
@@ -479,6 +502,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
                     }
                 });
+
 
     }
 }
