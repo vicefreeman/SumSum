@@ -36,7 +36,7 @@
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/txtTitle"
+                android:id="@+id/etTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -59,7 +59,7 @@
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/txtAuthor"
+                android:id="@+id/etPhone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -82,7 +82,7 @@
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/txtPublisher"
+                android:id="@+id/etPublisher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -106,7 +106,7 @@
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/txttIsbn"
+                android:id="@+id/etEmail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -131,7 +131,7 @@
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/txtIsbn"
+                android:id="@+id/etContent"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity=""
