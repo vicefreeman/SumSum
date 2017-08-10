@@ -93,8 +93,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final Circle finalMCircle = mCircle;
 
                 map.addMarker(new MarkerOptions()
-                        .position(latLng)
+                        .position(latLng).title("My Gate").snippet("Is here")
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+                        //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
                         .draggable(true));
 
 
