@@ -1,6 +1,5 @@
 package com.android.pribo.vice.sumsum.Geofence;
 
-import android.app.Activity;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -25,18 +24,11 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by user on 03/08/2017.
- *
- *
- */
-
 public class GeofenceTransitionsIntentService extends IntentService {
 
     private static final String TAG = "GeofenceTransitionsIS";
-    SharedPreferences shared;
-
-    String phoneNumber;
+    String phone;
+    SharedPreferences preferences;
 
     /**
      * This constructor is required, and calls the super IntentService(String)
@@ -44,6 +36,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
      */
     public GeofenceTransitionsIntentService() {
         // Use the TAG to name the worker thread.
+
         super(TAG);
     }
 
@@ -54,24 +47,26 @@ public class GeofenceTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        preferences =getSharedPreferences("shred" ,Context.MODE_PRIVATE);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceErrorMessages.getErrorString(this,
                     geofencingEvent.getErrorCode());
             Log.e(TAG, errorMessage);
-            shared = getSharedPreferences("shared" ,Context.MODE_PRIVATE);
+
+
             return;
         }
+
+
 
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-                geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
+                ) {
 
-            // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
             // Get the transition details as a String.
@@ -79,12 +74,30 @@ public class GeofenceTransitionsIntentService extends IntentService {
                     triggeringGeofences);
 
             // Send notification and log the transition details.
-            sendNotification(phoneNumber);
+            sendNotificationWithCall(phone);
+            makeCall(phone);
             Log.i(TAG, geofenceTransitionDetails);
-        } else {
-            // Log the error.
-            Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
+
+        }else if ( geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
+
+
+            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+
+            // Get the transition details as a String.
+            String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
+                    triggeringGeofences);
+
+            sendNotification(geofenceTransitionDetails);
+            Log.i(TAG, geofenceTransitionDetails);
         }
+        else {
+            // Log the error.
+            Log.e(TAG, getString( geofenceTransition));
+        }
+
+
+
+
     }
 
     /**
@@ -105,16 +118,19 @@ public class GeofenceTransitionsIntentService extends IntentService {
         for (Geofence geofence : triggeringGeofences) {
             triggeringGeofencesIdsList.add(geofence.getRequestId());
         }
-
-        for (int i = 0; i <triggeringGeofencesIdsList.size() ; i++) {
-            String check = "lll";
-            check = shared.getString(triggeringGeofencesIdsList.get(i), "lll");
-            if (!check.equals("lll") ){
-                phoneNumber = check;
-                break;
-            }
-        }
         String triggeringGeofencesIdsString = TextUtils.join(", ",  triggeringGeofencesIdsList);
+        for (int i = 0; i <triggeringGeofencesIdsList.size() ; i++) {
+            String r = triggeringGeofencesIdsList.get(i);
+            if ( r.equals(null)){}else {
+                String s=  preferences.getString(r.toLowerCase(), "for");
+                if (s.equals("for")) {
+                } else {
+                    phone = s;
+                    break;
+                }
+            }
+
+        }
 
 
         return geofenceTransitionString + ": " + triggeringGeofencesIdsString;
@@ -124,9 +140,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * Posts a notification in the notification bar when a transition is detected.
      * If the user clicks the notification, control goes to the MainActivity.
      */
-    private void sendNotification(String notificationDetails) {
+    private void sendNotificationWithCall(String notificationDetails) {
         // Create an explicit content Intent that starts the main Activity.
         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        //TODO: Try to use Context as THIS
 
         // Construct a task stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -145,11 +162,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
         // Define the notification settings.
-        builder.setSmallIcon(R.drawable.ic_alert_attention)
+
+        //TODO: Download Icons
+        builder.setSmallIcon(R.drawable.ic_menu_send)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.ic_alert_attention))
+                        R.drawable.ic_menu_camera))
                 .setColor(Color.RED)
                 .setContentTitle(notificationDetails)
                 .setContentText(getString(R.string.geofence_transition_notification_text))
@@ -164,6 +183,75 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
+
+
+
+
+    }
+
+    private void sendNotification(String notificationDetails) {
+        // Create an explicit content Intent that starts the main Activity.
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        //TODO: Try to use Context as THIS
+
+        // Construct a task stack.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Add the main Activity to the task stack as the parent.
+        stackBuilder.addParentStack(MainActivity.class);
+
+        // Push the content Intent onto the stack.
+        stackBuilder.addNextIntent(notificationIntent);
+
+        // Get a PendingIntent containing the entire back stack.
+        PendingIntent notificationPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Get a notification builder that's compatible with platform versions >= 4
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        // Define the notification settings.
+
+        //TODO: Download Icons
+        builder.setSmallIcon(R.drawable.ic_menu_send)
+                // In a real app, you may want to use a library like Volley
+                // to decode the Bitmap.
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.drawable.ic_menu_camera))
+                .setColor(Color.RED)
+                .setContentTitle(notificationDetails)
+                .setContentText(getString(R.string.geofence_transition_notification_text))
+                .setContentIntent(notificationPendingIntent);
+
+        // Dismiss notification once the user touches it.
+        builder.setAutoCancel(true);
+
+        // Get an instance of the Notification manager
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Issue the notification
+        mNotificationManager.notify(0, builder.build());
+
+
+
+    }
+
+    private void makeCall(String phone){
+        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        startActivity(callIntent);
     }
 
     /**
@@ -182,23 +270,4 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 return getString(R.string.unknown_geofence_transition);
         }
     }
-    private void makeCall(){
-        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-
-        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        callIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        startActivity(callIntent);
-    }
 }
-
-

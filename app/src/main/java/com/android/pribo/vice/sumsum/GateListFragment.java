@@ -89,6 +89,10 @@ public class GateListFragment extends Fragment {
 
                     rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
                     rvGateList.setAdapter(new GateListAdapter(gates, getTargetFragment()));
+                }else if (charSequence.length() == 0){
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Gates");
+                    rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
+                    rvGateList.setAdapter(new GateListAdapter(ref, getTargetFragment()));
                 }
             }
 

@@ -31,6 +31,7 @@ public class GreetingFragment extends Fragment {
     @BindView(R.id.tvUserGreeting)
     TextView tvUserGreeting;
     Unbinder unbinder;
+    String userName;
 
     public GreetingFragment() {
         // Required empty public constructor
@@ -46,7 +47,6 @@ public class GreetingFragment extends Fragment {
         showUserName();
         return view;
     }
-    String userName;
     private void showUserName() {
 
 
@@ -57,9 +57,9 @@ public class GreetingFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                String name = dataSnapshot.getValue().toString();
-                if (name!=null)
-                tvUserGreeting.setText("Welcome " + name + " !");
+                userName = dataSnapshot.getValue().toString();
+                if (userName != null)
+                tvUserGreeting.setText("Welcome " + userName + " !");
 
             }
 

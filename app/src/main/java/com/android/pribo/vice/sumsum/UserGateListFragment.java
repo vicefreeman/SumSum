@@ -70,6 +70,7 @@ public class UserGateListFragment extends Fragment {
 
             }
         });
+
         return view;
 
     }
