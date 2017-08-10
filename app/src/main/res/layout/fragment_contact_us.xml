@@ -3,21 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android.pribo.vice.sumsum.ContectFragment">
+    tools:context="com.android.pribo.vice.sumsum.ContactUsFragment">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:weightSum="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:weightSum="1">
+        app:layout_constraintVertical_bias="0.0"
+        android:id="@+id/linearLayout2">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -28,14 +31,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="Title" />
+                android:gravity=""
+                android:text="Title"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/txtTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:layout_weight="0.75"
-                android:ems="10" />
+                android:background="@drawable/edittextstyle"
+                android:ems="10"
+                android:padding="8dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,14 +55,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="phone" />
+                android:text="Phone"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/txtAuthor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:layout_weight="0.75"
-                android:ems="10" />
+                android:background="@drawable/edittextstyle"
+                android:ems="10"
+                android:padding="8dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -66,77 +78,96 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="name" />
+                android:text="Name"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/txtPublisher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:layout_weight="0.75"
-                android:ems="10" />
+                android:background="@drawable/edittextstyle"
+                android:ems="10"
+                android:padding="8dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-
+            android:layout_marginBottom="8dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="mail" />
+                android:text="E-mail"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/txttIsbn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:layout_weight="0.75"
-                android:ems="10" />
+                android:background="@drawable/edittextstyle"
+                android:ems="10"
+                android:padding="8dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="0.55">
+            android:layout_margin="8dp"
+            android:layout_weight="0.55"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="massege" />
+                android:text="Message"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/txtIsbn"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.75"
-                android:ems="10" />
+                android:layout_gravity=""
+                android:layout_margin="8dp"
+                android:layout_weight="0.14"
+                android:background="@drawable/edittextstyle"
+                android:ems="10"
+                android:gravity="top"
+                android:hint="Hello SumSum developers..."
+                android:padding="8dp"
+                android:textSize="16sp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.51"
-            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnSubmit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.375"
-                android:onClick="sedMail"
-                android:text="submit" />
-
-            <Button
-                android:id="@+id/btnCancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.375"
-                android:text="cancel" />
-        </LinearLayout>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSend"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/btnSend"
+
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintTop_toTopOf="@+id/btnCancel"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
 </android.support.constraint.ConstraintLayout>

@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     public void moveToContect(MenuItem item) {
         getSupportFragmentManager().
                 beginTransaction().
-                replace(R.id.mainContainer, new ContectFragment()).
+                replace(R.id.mainContainer, new ContactUsFragment()).
                 commit();
 
     }
