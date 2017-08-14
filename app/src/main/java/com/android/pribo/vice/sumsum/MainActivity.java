@@ -1,5 +1,7 @@
 package com.android.pribo.vice.sumsum;
 
+import android.*;
+import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -48,16 +50,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     Activity activity;
-
-    public void sedMail(View view) {
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto","hidayeichler@gmail.com", null));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
-        startActivity(Intent.createChooser(emailIntent, "Send email..."));
-        Intent n = new Intent(this, MapsActivity.class);
-        startActivity(n);
-    }
 
     public void moveToContect(MenuItem item) {
         getSupportFragmentManager().
@@ -131,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        addGeofences();
 
     }
 
@@ -185,16 +176,9 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         return builder.build();
     }
 
-    @SuppressWarnings("MissingPermission")
-    private void addGeofences() {
-        if (!checkPermissions()) {
-            requestPermissions();
-        } else {
 
-        mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
-        Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
-        }
-    }
+
+
 
     @Override
     protected void onStop() {
@@ -211,13 +195,21 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
     }
 
-    @SuppressWarnings("MissingPermission")
-    private void removeGeofences() {
-        if (!checkPermissions()) {
-            showSnackbar(getString(R.string.insufficient_permissions));
-            return;
-        } else
 
+    private void addGeofences() {
+        if (!checkPermissions()) {
+            requestPermissions();
+        }else if (!checkCallPermission()){
+            requestCallPermission();
+        }
+        else {
+
+            mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
+            Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void removeGeofences() {
             mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
     }
 
@@ -230,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
             int messageId = getGeofencesAdded() ? R.string.geofences_added :
                     R.string.geofences_removed;
-            Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show();
         } else {
             // Get the status code for the error and log it using a user-friendly message.
             String errorMessage = GeofenceErrorMessages.getErrorString(this, task.getException());
@@ -393,7 +385,16 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
+
+        //int callPermissionState = ActivityCompat.checkSelfPermission(this , Manifest.permission.CALL_PHONE);
+
+        if (permissionState == PackageManager.PERMISSION_GRANTED)
+
+        return true;
+
+        else return false;
+
+
     }
 
     private void requestPermissions() {
@@ -424,6 +425,24 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
+    }
+
+    private boolean checkCallPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+
+            return false;
+        }
+        else return true;
+
+    }
+
+    private void requestCallPermission(){
+
+        ActivityCompat.requestPermissions(
+                this, new String[]{Manifest.permission.CALL_PHONE}, 1
+        );
+
     }
 
     /**
@@ -487,6 +506,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                                     replace(R.id.topContainer , new GreetingFragment()).
                                     replace(R.id.bottomContainer, new UserGateListFragment()).
                                     commit();
+
+                            addGeofences();
 
                         }else {
 

@@ -184,8 +184,8 @@ public class GateListFragment extends Fragment {
                     userList.setValue(model);
                     n = new AlertDialog.Builder(context)
                             .setTitle("Gate added")
-                            .setMessage("You have added gate" + gateName + " to your list ")
-                            .setPositiveButton("Add another..", new DialogInterface.OnClickListener() {
+                            .setMessage("You have added: " + gateName + " to your list ")
+                            .setPositiveButton("+ Add another", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     n.dismiss();
@@ -197,6 +197,7 @@ public class GateListFragment extends Fragment {
                                     Intent intent = new Intent(context, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     context.startActivity(intent);
+
 
                                 }
                             })

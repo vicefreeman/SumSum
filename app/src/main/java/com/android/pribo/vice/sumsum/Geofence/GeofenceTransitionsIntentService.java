@@ -169,7 +169,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_menu_camera))
-                .setColor(Color.RED)
+                .setColor(Color.CYAN)
                 .setContentTitle(notificationDetails)
                 .setContentText(getString(R.string.geofence_transition_notification_text))
                 .setContentIntent(notificationPendingIntent);
@@ -218,7 +218,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_menu_camera))
-                .setColor(Color.RED)
+                .setColor(Color.CYAN)
                 .setContentTitle(notificationDetails)
                 .setContentText(getString(R.string.geofence_transition_notification_text))
                 .setContentIntent(notificationPendingIntent);
