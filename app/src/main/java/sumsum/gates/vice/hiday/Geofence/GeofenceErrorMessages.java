@@ -1,11 +1,12 @@
-package com.android.pribo.vice.sumsum.Geofence;
+package sumsum.gates.vice.hiday.Geofence;
 
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.android.pribo.vice.sumsum.R;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.GeofenceStatusCodes;
+
+import sumsum.gates.vice.hiday.R;
 
 /**
  * Created by user on 03/08/2017.

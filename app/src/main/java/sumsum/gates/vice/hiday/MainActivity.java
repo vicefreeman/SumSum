@@ -1,6 +1,5 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
-import android.*;
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -18,14 +17,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.android.pribo.vice.sumsum.Geofence.GeofenceErrorMessages;
-import com.android.pribo.vice.sumsum.Geofence.GeofenceTransitionsIntentService;
+import sumsum.gates.vice.hiday.*;
+
+import sumsum.gates.vice.hiday.Geofence.GeofenceErrorMessages;
+import sumsum.gates.vice.hiday.Geofence.GeofenceTransitionsIntentService;
+import sumsum.gates.vice.hiday.Modules.Gate;
+
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     public void moveToContect(MenuItem item) {
         getSupportFragmentManager().
                 beginTransaction().
-                replace(R.id.mainContainer, new ContactUsFragment()).
+                replace(sumsum.gates.vice.hiday.R.id.mainContainer, new ContactUsFragment()).
                 commit();
 
     }
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
+        addGeofences();
     }
 
     private void initWithUser() {
@@ -145,19 +147,20 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         checkIfUserHaveGatesList();
 
         //Add Main gates to the DB
-/*
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Gates");
         Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
-        /*Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
+        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
         Gate g3 = new Gate(32.0847061,34.8011774 ,200, "0505978532", "HackerU", "HackerU test");
         Gate g4 = new Gate(34.8762752,32.2956391 ,200, "0543532447", "Home", "Home Test");
-        Gate g5 = new Gate(32.1542598,35.1019961 ,200, "0505978532", "Nofim Home test", "Nofim Home test");
+        Gate g5 = new Gate(32.149635, 35.108194 ,200, "0543582460", "Nofim Main Gate", "Nofim Main Gate");
 
         myRef.child(g.getName()).setValue(g);
-       /* myRef.child(g2.getName()).setValue(g2);
+        myRef.child(g2.getName()).setValue(g2);
         myRef.child(g3.getName()).setValue(g3);
-        myRef.child(g4.getName()).setValue(g4);*/
+        myRef.child(g4.getName()).setValue(g4);
+        myRef.child(g5.getName()).setValue(g5);
 
     }
 
@@ -203,9 +206,9 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             requestCallPermission();
         }
         else {
-
+            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
             mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
-            Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -222,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
             int messageId = getGeofencesAdded() ? R.string.geofences_added :
                     R.string.geofences_removed;
-            //Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show();
         } else {
             // Get the status code for the error and log it using a user-friendly message.
             String errorMessage = GeofenceErrorMessages.getErrorString(this, task.getException());
@@ -508,7 +511,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                                     commit();
 
                             addGeofences();
-
                         }else {
 
                             getSupportFragmentManager().

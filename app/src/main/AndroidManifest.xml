@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.pribo.vice.sumsum">
+    package="sumsum.gates.vice.hiday">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,10 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".Geofence.GeofenceTransitionsIntentService" />
+        <service android:name="sumsum.gates.vice.hiday.Geofence.GeofenceTransitionsIntentService" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="sumsum.gates.vice.hiday.MainActivity"
             android:label="Sum Sum"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignInActivity"
+            android:name="sumsum.gates.vice.hiday.SignInActivity"
             android:label="Sign in to Sum Sum"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -50,7 +50,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name="sumsum.gates.vice.hiday.MapsActivity"
             android:icon="@drawable/barlogo"
             android:label="Create a custom Gate"
             android:screenOrientation="portrait" />

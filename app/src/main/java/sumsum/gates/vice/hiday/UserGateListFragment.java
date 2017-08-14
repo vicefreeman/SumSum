@@ -1,4 +1,4 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.pribo.vice.sumsum.Modules.Gate;
+import sumsum.gates.vice.hiday.Modules.Gate;
+
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

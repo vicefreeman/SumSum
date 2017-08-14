@@ -1,11 +1,13 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +28,8 @@ public class SignInActivity extends AppCompatActivity {
     Button btnSignIn;
     @BindView(R.id.etUserName)
     EditText etUserName;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +40,13 @@ public class SignInActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnSignIn)
     public void onEnterClicked() {
+
         if (etUserName.getText().toString().isEmpty()) {
             etUserName.setError("You didn't enter your name");
-        }else if (etUserName.getText().toString().length() < 3){
+        } else if (etUserName.getText().toString().length() < 3) {
             etUserName.setError("Name Should contain et least 3 letters");
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener(this,
                     new OnCompleteListener<AuthResult>() {
                         @Override

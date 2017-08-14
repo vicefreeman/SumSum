@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "79796853219",
-    "firebase_url": "https://sumsum-6e65e.firebaseio.com",
-    "project_id": "sumsum-6e65e",
-    "storage_bucket": "sumsum-6e65e.appspot.com"
+    "project_number": "564758856763",
+    "firebase_url": "https://sumsum-gates.firebaseio.com",
+    "project_id": "sumsum-gates",
+    "storage_bucket": "sumsum-gates.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:79796853219:android:8004e3175ee6cb1e",
+        "mobilesdk_app_id": "1:564758856763:android:a5f64b662d8531ba",
         "android_client_info": {
-          "package_name": "com.android.pribo.vice.sumsum"
+          "package_name": "susmsum.gates.vice.hiday"
         }
       },
       "oauth_client": [
         {
-          "client_id": "79796853219-3gofuahq2lrk3i6ltffs3eb1jlgqi7gl.apps.googleusercontent.com",
+          "client_id": "564758856763-uo04gvnca7mpvosm2bpenehrqta68s29.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android.pribo.vice.sumsum",
-            "certificate_hash": "fd1589dc8b7e29e961e56f8c85b43df0107d8e7f"
+            "package_name": "susmsum.gates.vice.hiday",
+            "certificate_hash": "c9326e9913f207b670ad71282e6922116d31711e"
           }
         },
         {
-          "client_id": "79796853219-a4jnjlk4p0r156p0he8rbjjrukt830hd.apps.googleusercontent.com",
+          "client_id": "564758856763-81mkd03vqof3a3u1ja4bdbhko2shkbgm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBDInhkkzfB6_sSA9EFwKatMBSLioThtdA"
+          "current_key": "AIzaSyA5VyLckPOYZe6Uh9m7XQD70rse4MblGXc"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "79796853219-a4jnjlk4p0r156p0he8rbjjrukt830hd.apps.googleusercontent.com",
+              "client_id": "564758856763-81mkd03vqof3a3u1ja4bdbhko2shkbgm.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

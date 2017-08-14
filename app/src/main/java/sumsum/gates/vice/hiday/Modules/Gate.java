@@ -1,4 +1,4 @@
-package com.android.pribo.vice.sumsum.Modules;
+package sumsum.gates.vice.hiday.Modules;
 
 import android.os.Parcel;
 import android.os.Parcelable;

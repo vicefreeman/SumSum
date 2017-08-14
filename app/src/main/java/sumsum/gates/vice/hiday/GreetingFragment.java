@@ -1,4 +1,4 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 
 import android.os.Bundle;

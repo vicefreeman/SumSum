@@ -1,4 +1,4 @@
-package com.android.pribo.vice.sumsum.Geofence;
+package sumsum.gates.vice.hiday.Geofence;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -16,8 +16,8 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.android.pribo.vice.sumsum.MainActivity;
-import com.android.pribo.vice.sumsum.R;
+import sumsum.gates.vice.hiday.MainActivity;
+import sumsum.gates.vice.hiday.R;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 

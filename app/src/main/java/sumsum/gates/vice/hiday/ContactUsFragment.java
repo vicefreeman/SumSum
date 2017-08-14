@@ -1,4 +1,4 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 
 import android.content.ActivityNotFoundException;
@@ -15,9 +15,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 
 

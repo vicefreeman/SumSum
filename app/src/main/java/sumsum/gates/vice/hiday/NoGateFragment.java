@@ -1,4 +1,4 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

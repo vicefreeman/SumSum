@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="com.android.pribo.vice.sumsum.GreetingFragment">
+    tools:context="sumsum.gates.vice.hiday.GreetingFragment">
 
     <TextView
         android:id="@+id/tvUserGreeting"

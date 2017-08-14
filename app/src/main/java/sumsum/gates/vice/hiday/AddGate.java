@@ -1,10 +1,12 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.pribo.vice.sumsum.Modules.Gate;
+import sumsum.gates.vice.hiday.Modules.Gate;
+
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,12 +40,19 @@ public class AddGate extends Fragment {
     EditText etGateName;
     Activity activity;
 
+    OnRadiusUpdateListener listener;
 
     Button btnBack;
     public AddGate() {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (OnRadiusUpdateListener) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +68,23 @@ public class AddGate extends Fragment {
             @Override
             public void onClick(View view) {
                 getActivity().onBackPressed();
+            }
+        });
+
+        etRadius.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                listener.onRadiusUpdated(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         return view;
@@ -101,8 +127,9 @@ public class AddGate extends Fragment {
         }
     }
 
-    public interface OnBtnClickedAddPrivetGateListener {
-        public void OnBtnClickedAddPrivetGate(List<String> data);
+
+    public interface OnRadiusUpdateListener{
+        void onRadiusUpdated(String radius);
     }
 
 }

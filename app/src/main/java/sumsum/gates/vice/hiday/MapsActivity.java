@@ -1,12 +1,12 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
+
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,12 +19,12 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.Task;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AddGate.OnRadiusUpdateListener {
 
     private GoogleMap mMap;
 
+    private Circle mCircle;
 
 
     FusedLocationProviderClient client;
@@ -39,8 +39,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame1 , mapFragment)
-                .replace(R.id.frame2 , new AddGate())
+                .replace(R.id.frame1, mapFragment)
+                .replace(R.id.frame2, new AddGate())
                 .commit();
 
         //tell me when the map is loaded
@@ -48,7 +48,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //client = LocationServices.getFusedLocationProviderClient(this);
 
     }
-
 
 
     @Override
@@ -64,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map) {
         //addMarker(map);
+
         setMyLocation(map);
         setUpMap(map);
 
@@ -82,10 +82,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .center(latLng)
                         .radius(200)
                         .strokeColor(Color.YELLOW)
-                        .fillColor(Color.argb(100 , 0  , 188 , 212))
+                        .fillColor(Color.argb(100, 0, 188, 212))
                         .strokeWidth(8).clickable(true);
-
-                Circle mCircle;
 
 
                 mCircle = map.addCircle(circleOptions);
@@ -135,24 +133,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setMyLocation(GoogleMap map) {
 
-        if (checkLocationPermission())
+        if (checkLocationPermission()) {
             map.setMyLocationEnabled(true);
+        }
     }
 
-
-    private void addMarker(GoogleMap map) {
-
-        if (!checkLocationPermission()) return;
-
-        Task<Location> task = client.getLastLocation();
-        Location location = task.getResult();
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-
-        map.addMarker(new MarkerOptions().position(latLng));
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
-    }
 
     private boolean checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this,
@@ -164,7 +149,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             return false;
         }
-        return true;
+        else
+             return true;
     }
 
+    @Override
+    public void onRadiusUpdated(String radius) {
+        mCircle.setRadius(Double.valueOf(radius));
+    }
 }

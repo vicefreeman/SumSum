@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android.pribo.vice.sumsum.AddGate">
+    tools:context="sumsum.gates.vice.hiday.AddGate">
 
     <EditText
         android:id="@+id/etPhoneNum"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Radius in Meters..."
+        android:hint="Radius in Meters (Default: 200)"
         android:inputType="number"
         android:layout_above="@+id/etPhoneNum"
         android:layout_alignLeft="@+id/etPhoneNum"

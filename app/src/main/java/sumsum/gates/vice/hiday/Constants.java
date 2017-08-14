@@ -1,4 +1,4 @@
-package com.android.pribo.vice.sumsum;
+package sumsum.gates.vice.hiday;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -32,7 +32,7 @@ final class Constants {
     static {
 
         BAY_AREA_LANDMARKS.put("NofimGate", new LatLng(32.149512,35.1092797));
-        BAY_AREA_LANDMARKS.put("HackerU", new LatLng(32.084403, 34.800743));
+//        BAY_AREA_LANDMARKS.put("HackerU", new LatLng(32.084403, 34.800743));
 //        BAY_AREA_LANDMARKS.put("home", new LatLng(32.2956631,34.8763412));
     }
 }
