@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     public void moveToContect(MenuItem item) {
         getSupportFragmentManager().
                 beginTransaction().
-                replace(R.id.mainContainer, new ContectFragment()).
+                replace(R.id.mainContainer, new ContactUsFragment()).
                 commit();
 
     }

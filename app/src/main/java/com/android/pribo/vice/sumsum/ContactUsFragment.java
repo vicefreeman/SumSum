@@ -36,10 +36,7 @@ public class ContactUsFragment extends Fragment {
     EditText etContent;
     @BindView(R.id.linearLayout2)
     LinearLayout linearLayout2;
-    @BindView(R.id.btnCancel)
-    Button btnCancel;
-    @BindView(R.id.btnSend)
-    Button btnSend;
+    Button btnSend , btnCancel;
 
     Unbinder unbinder;
 
@@ -54,6 +51,25 @@ public class ContactUsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contact_us, container, false);
         unbinder = ButterKnife.bind(this, view);
+
+        btnSend = (Button) view.findViewById(R.id.btnSend);
+        btnCancel = (Button) view.findViewById(R.id.btnCancel);
+
+
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendEmail();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity() , MainActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
@@ -75,7 +91,6 @@ public class ContactUsFragment extends Fragment {
         try {
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             Log.d("Finished Email", " ");
-            getActivity().onBackPressed();
         } catch (ActivityNotFoundException ex) {
             Toast.makeText(getActivity(),
                     "There is no email client installed.", Toast.LENGTH_SHORT).show();
@@ -89,16 +104,6 @@ public class ContactUsFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.btnCancel, R.id.btnSend})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btnCancel:
-                Intent intent = new Intent(getActivity() , MainActivity.class);
-                startActivity(intent);
-            case R.id.btnSend:
-                sendEmail();
-        }
-    }
 
     public EditText getEtTitle() {
         return etTitle;
