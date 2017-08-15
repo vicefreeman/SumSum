@@ -14,6 +14,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -45,6 +46,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Handler;
 
 public class MainActivity extends AppCompatActivity implements OnCompleteListener<Void>{
 
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private GeofencingClient mGeofencingClient;
     private ArrayList<Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
-    private PendingGeofenceTask mPendingGeofenceTask = PendingGeofenceTask.NONE;
+    private PendingGeofenceTask mPendingGeofenceTask = PendingGeofenceTask.ADD;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String uid;
@@ -148,19 +150,19 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
         //Add Main gates to the DB
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Gates");
-        Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
-        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
-        Gate g3 = new Gate(32.0847061,34.8011774 ,200, "0505978532", "HackerU", "HackerU test");
-        Gate g4 = new Gate(34.8762752,32.2956391 ,200, "0543532447", "Home", "Home Test");
-        Gate g5 = new Gate(32.149635, 35.108194 ,200, "0543582460", "Nofim Main Gate", "Nofim Main Gate");
-
-        myRef.child(g.getName()).setValue(g);
-        myRef.child(g2.getName()).setValue(g2);
-        myRef.child(g3.getName()).setValue(g3);
-        myRef.child(g4.getName()).setValue(g4);
-        myRef.child(g5.getName()).setValue(g5);
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("Gates");
+//        Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
+//        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
+//        Gate g3 = new Gate(32.0847061,34.8011774 ,200, "0505978532", "HackerU", "HackerU test");
+//        Gate g4 = new Gate(34.8762752,32.2956391 ,200, "0543532447", "Home", "Home Test");
+//        Gate g5 = new Gate(32.149635, 35.108194 ,200, "0543582460", "Nofim Main Gate", "Nofim Main Gate");
+//
+//        myRef.child(g.getName()).setValue(g);
+//        myRef.child(g2.getName()).setValue(g2);
+//        myRef.child(g3.getName()).setValue(g3);
+//        myRef.child(g4.getName()).setValue(g4);
+//        myRef.child(g5.getName()).setValue(g5);
 
     }
 
@@ -206,25 +208,26 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             requestCallPermission();
         }
         else {
-            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+//            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
             mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
 //            Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void removeGeofences() {
-            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
-    }
+//    private void removeGeofences() {
+//            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+//    }
 
 
     @Override
     public void onComplete(@NonNull Task<Void> task) {
-        mPendingGeofenceTask = PendingGeofenceTask.NONE;
+        mPendingGeofenceTask = PendingGeofenceTask.ADD;
         if (task.isSuccessful()) {
-            updateGeofencesAdded(!getGeofencesAdded());
+            updateGeofencesAdded(true);
 
-            int messageId = getGeofencesAdded() ? R.string.geofences_added :
-                    R.string.geofences_removed;
+            int messageId;
+            if (getGeofencesAdded()) messageId = R.string.geofences_added;
+            else messageId = R.string.geofences_removed;
             Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show();
         } else {
             // Get the status code for the error and log it using a user-friendly message.
@@ -378,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             addGeofences();
             Toast.makeText(this, "Got the fence from Pending Intent", Toast.LENGTH_SHORT).show();
         } else if (mPendingGeofenceTask == PendingGeofenceTask.REMOVE) {
-            removeGeofences();
+            addGeofences();
         }
     }
 
@@ -504,13 +507,16 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         if (snapshot.hasChildren()) {
-                            getSupportFragmentManager().
-                                    beginTransaction().
-                                    replace(R.id.topContainer , new GreetingFragment()).
-                                    replace(R.id.bottomContainer, new UserGateListFragment()).
-                                    commit();
 
+                            FragmentTransaction replace = getSupportFragmentManager().
+                                    beginTransaction().
+                                    replace(R.id.topContainer, new GreetingFragment()).
+                                    replace(R.id.bottomContainer, new UserGateListFragment());
+                            populateGeofenceList();
                             addGeofences();
+                            replace.commit();
+
+
                         }else {
 
                             getSupportFragmentManager().

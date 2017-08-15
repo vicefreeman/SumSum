@@ -1,5 +1,7 @@
 package sumsum.gates.vice.hiday;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -77,7 +79,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
                 Toast.makeText(MapsActivity.this, latLng.toString(), Toast.LENGTH_SHORT).show();
-
+                SharedPreferences preferences = getSharedPreferences("shred" , Context.MODE_PRIVATE);
+                SharedPreferences.Editor edit = preferences.edit();
+                String radius = preferences.getString("radius", "200");
+                edit.putString("lat", String.valueOf(latLng.latitude));
+                edit.putString("lng", String.valueOf(latLng.longitude));
+                edit.commit();
                 final CircleOptions circleOptions = new CircleOptions()
                         .center(latLng)
                         .radius(200)
