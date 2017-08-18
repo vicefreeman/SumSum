@@ -23,11 +23,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import sumsum.gates.vice.hiday.*;
-
-import sumsum.gates.vice.hiday.Geofence.GeofenceErrorMessages;
-import sumsum.gates.vice.hiday.Geofence.GeofenceTransitionsIntentService;
 import sumsum.gates.vice.hiday.Modules.Gate;
+import sumsum.gates.vice.hiday.geofence.GeofenceErrorMessages;
+import sumsum.gates.vice.hiday.geofence.GeofenceTransitionsIntentService;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -46,7 +44,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.Handler;
 
 public class MainActivity extends AppCompatActivity implements OnCompleteListener<Void>{
 
@@ -133,36 +130,34 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private void initWithUser() {
 
         // Empty list for storing geofences.
-        mGeofenceList = new ArrayList<>();
+        mGeofenceList = populateGeofenceList();
 
         // Initially set the PendingIntent used in addGeofences() and removeGeofences() to null.
         mGeofencePendingIntent = null;
 
 
-        // Get the geofences used. Geofence data is hard coded in this sample.
-        populateGeofenceList();
+//        // Get the geofences used. Geofence data is hard coded in this sample.
+//        populateGeofenceList();
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
-
-//        addGeofencesButtonHandler();
 
         checkIfUserHaveGatesList();
 
         //Add Main gates to the DB
 
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("Gates");
-//        Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
-//        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
-//        Gate g3 = new Gate(32.0847061,34.8011774 ,200, "0505978532", "HackerU", "HackerU test");
-//        Gate g4 = new Gate(34.8762752,32.2956391 ,200, "0543532447", "Home", "Home Test");
-//        Gate g5 = new Gate(32.149635, 35.108194 ,200, "0543582460", "Nofim Main Gate", "Nofim Main Gate");
-//
-//        myRef.child(g.getName()).setValue(g);
-//        myRef.child(g2.getName()).setValue(g2);
-//        myRef.child(g3.getName()).setValue(g3);
-//        myRef.child(g4.getName()).setValue(g4);
-//        myRef.child(g5.getName()).setValue(g5);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Gates");
+        Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
+        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
+        Gate g3 = new Gate(32.0844269,34.8029073 ,1200, "0505978532", "HackerUוו", "HackerU test");
+        Gate g4 = new Gate(32.2956391, 34.8762752 ,200, "0543532447", "Home", "Home Test");
+        Gate g5 = new Gate(32.149635, 35.108194 ,200, "0543582460", "Nofim Main Gate", "Nofim Main Gate");
+
+        myRef.child(g.getName()).setValue(g);
+        myRef.child(g2.getName()).setValue(g2);
+        myRef.child(g3.getName()).setValue(g3);
+        myRef.child(g4.getName()).setValue(g4);
+        myRef.child(g5.getName()).setValue(g5);
 
     }
 
@@ -202,21 +197,21 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
 
     private void addGeofences() {
-        if (!checkPermissions()) {
+       if (!checkPermissions()) {
             requestPermissions();
         }else if (!checkCallPermission()){
             requestCallPermission();
         }
         else {
-//            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
             mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
 //            Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
         }
     }
 
-//    private void removeGeofences() {
-//            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
-//    }
+    private void removeGeofences() {
+            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+    }
 
 
     @Override
@@ -261,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
      * This sample hard codes geofence data. A real app might dynamically create geofences based on
      * the user's location.
      */
-    private void populateGeofenceList() {
-
+    private ArrayList populateGeofenceList() {
+        final ArrayList<Geofence> geofensList = new ArrayList<>();
 
         FirebaseDatabase.getInstance().getReference("UserGatesList")
                 .child(mAuth.getCurrentUser().getUid().toString()).addValueEventListener(new ValueEventListener() {
@@ -277,13 +272,13 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                             .setCircularRegion(lat, lang, distance)
                             .setExpirationDuration(Geofence.NEVER_EXPIRE)
                             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                                    Geofence.GEOFENCE_TRANSITION_EXIT)
+                                    Geofence.GEOFENCE_TRANSITION_EXIT )
                             .build();
-                    mGeofenceList.add(geofence);
-                    SharedPreferences sharedPref = activity.getSharedPreferences("shared" ,Context.MODE_PRIVATE);
+                    geofensList.add(geofence);
+                    SharedPreferences sharedPref = getSharedPreferences("shred" ,Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
 
-                    editor.putString(postSnapshot.child("name").getValue().toString(), phoneNumber);
+                    editor.putString(postSnapshot.child("name").getValue().toString().toLowerCase(), phoneNumber);
 
                     editor.apply();
 
@@ -294,35 +289,10 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             public void onCancelled(DatabaseError databaseError) {
 
             }
+
         });
 
-
-        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
-
-            mGeofenceList.add(new Geofence.Builder()
-                    // Set the request ID of the geofence. This is a string to identify this
-                    // geofence.
-                    .setRequestId(entry.getKey())
-
-                    // Set the circular region of this geofence.
-                    .setCircularRegion(
-                            entry.getValue().latitude,
-                            entry.getValue().longitude,
-                            Constants.GEOFENCE_RADIUS_IN_METERS
-                    )
-
-                    // Set the expiration duration of the geofence. This geofence gets automatically
-                    // removed after this period of time.
-                    .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
-
-                    // Set the transition types of interest. Alerts are only generated for these
-                    // transition. We track entry and exit transitions in this sample.
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                            Geofence.GEOFENCE_TRANSITION_EXIT)
-
-                    // Create the geofence.
-                    .build());
-        }
+        return geofensList;
     }
 
     /**
@@ -381,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             addGeofences();
             Toast.makeText(this, "Got the fence from Pending Intent", Toast.LENGTH_SHORT).show();
         } else if (mPendingGeofenceTask == PendingGeofenceTask.REMOVE) {
-            addGeofences();
+            removeGeofences();
         }
     }
 
@@ -512,10 +482,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                                     beginTransaction().
                                     replace(R.id.topContainer, new GreetingFragment()).
                                     replace(R.id.bottomContainer, new UserGateListFragment());
-                            populateGeofenceList();
                             addGeofences();
                             replace.commit();
-
 
                         }else {
 

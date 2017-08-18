@@ -25,7 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AddGate.OnRadiusUpdateListener {
 
     private GoogleMap mMap;
-
+    String radius;
     private Circle mCircle;
 
 
@@ -76,18 +76,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(final LatLng latLng) {
-
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
                 Toast.makeText(MapsActivity.this, latLng.toString(), Toast.LENGTH_SHORT).show();
                 SharedPreferences preferences = getSharedPreferences("shred" , Context.MODE_PRIVATE);
                 SharedPreferences.Editor edit = preferences.edit();
-                String radius = preferences.getString("radius", "200");
+                radius = preferences.getString("radius", "200");
                 edit.putString("lat", String.valueOf(latLng.latitude));
                 edit.putString("lng", String.valueOf(latLng.longitude));
                 edit.commit();
                 final CircleOptions circleOptions = new CircleOptions()
                         .center(latLng)
-                        .radius(200)
+                        .radius(Double.valueOf(radius))
                         .strokeColor(Color.YELLOW)
                         .fillColor(Color.argb(100, 0, 188, 212))
                         .strokeWidth(8).clickable(true);

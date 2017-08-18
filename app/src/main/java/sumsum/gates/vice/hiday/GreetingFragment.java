@@ -1,6 +1,8 @@
 package sumsum.gates.vice.hiday;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,6 +34,7 @@ public class GreetingFragment extends Fragment {
     TextView tvUserGreeting;
     Unbinder unbinder;
     String userName;
+    SharedPreferences sharedPreferences;
 
     public GreetingFragment() {
         // Required empty public constructor
@@ -44,33 +47,21 @@ public class GreetingFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_greeting, container, false);
         unbinder = ButterKnife.bind(this, view);
+
         showUserName();
         return view;
     }
     private void showUserName() {
-
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        final DatabaseReference userId = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
-        userId.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                userName = dataSnapshot.getValue().toString();
+        sharedPreferences=  getContext().getSharedPreferences("shred" , Context.MODE_PRIVATE);
+        userName = sharedPreferences.getString("username", "unknown");
                 if (userName != null)
                 tvUserGreeting.setText("Welcome " + userName + " !");
 
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
        /* Toast.makeText(getContext(), userName, Toast.LENGTH_SHORT).show();
         tvUserGreeting.setText("Welcome " + userName + "! ");*/
-    }
 
     @Override
     public void onDestroyView() {

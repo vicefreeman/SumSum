@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentStart="false"
             android:background="@drawable/edittextstyle"
             android:hint="Search in the list"
 
@@ -43,7 +43,7 @@
             android:background="@drawable/btnsearch"
 
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
             android:layout_alignBottom="@+id/etSearch"
 
             android:layout_below="@+id/textView2" />
@@ -92,25 +92,25 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <Button
             android:id="@+id/backBtn"
-
-            android:background="@drawable/btnback"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_margin="16dp"
-            android:layout_marginTop="-16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/btnback"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginLeft="8dp"
-            app:layout_constraintHorizontal_bias="0.25"
-            android:layout_marginRight="8dp" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            tools:layout_editor_absoluteY="0dp" />
 
-    </RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+
 
 </LinearLayout>

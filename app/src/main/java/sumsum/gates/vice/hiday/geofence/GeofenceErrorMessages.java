@@ -1,4 +1,4 @@
-package sumsum.gates.vice.hiday.Geofence;
+package sumsum.gates.vice.hiday.geofence;
 
 import android.content.Context;
 import android.content.res.Resources;

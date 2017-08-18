@@ -1,4 +1,4 @@
-package sumsum.gates.vice.hiday.Geofence;
+package sumsum.gates.vice.hiday.geofence;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -9,12 +9,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -25,7 +24,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 
 import java.util.ArrayList;
@@ -37,14 +38,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
     private static final String TAG = "GeofenceTransitionsIS";
     String phone;
     SharedPreferences preferences;
-    FusedLocationProviderClient client;
-    GoogleApiClient googleApiClient = null;
-    LocationRequest mLocationRequest;
-    LocationSettingsRequest.Builder builder;
-    private float speed;
-    String stateString;
-
-
+    float speed;
     /**
      * This constructor is required, and calls the super IntentService(String)
      * constructor with the name for a worker thread.
@@ -65,42 +59,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-//        client = LocationServices.getFusedLocationProviderClient(getApplicationContext());
-//        googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).addApi(LocationServices.API).addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-//            @Override
-//            public void onConnected(@Nullable Bundle bundle) {
-//                Log.d(TAG, "Connected to api");
-//            }
-//
-//            @Override
-//            public void onConnectionSuspended(int i) {
-//                Log.d(TAG, "Suspended Connection to api");
-//            }
-//        }).addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-//            @Override
-//            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//
-//            }
-//        }).build();
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        PendingResult<Status> result = LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest, new LocationListener() {
-//            @Override
-//            public void onLocationChanged(Location location) {
-//                speed = location.getSpeed();
-//            }
-//        });
-//
-//        mLocationRequest =  LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setFastestInterval(1000).setInterval(1000);
-//        getPhoneState();
+
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                speed =  location.getSpeed();
+            }
+        };
 
         preferences = getSharedPreferences("shred", Context.MODE_PRIVATE);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
@@ -118,44 +83,24 @@ public class GeofenceTransitionsIntentService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ) {
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+            if ((speed > 7)) {
+                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
+            }else {
+                sendNotification("Enter Click to open gate");
+            };
 
-            // Get the transition details as a String.
-            String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
-                    triggeringGeofences);
-
-            // Send notification and log the transition details.
-//            sendNotificationWithCall(stateString);
-            try {
-                makeCall(phone);
-            }catch (Exception e){
-                sendNotification("workes");
+        }else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){}else {
+            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+            if ((speed > 7)) {
+                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
+            }else {
+                sendNotification("Dewll Click to open gate");
             }
-
-            Log.i(TAG, geofenceTransitionDetails);
-
-        } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
-
-//            if (speed > 8) {
-                List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-
-                // Get the transition details as a String.
-                String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
-                        triggeringGeofences);
-                makeCall(phone);
-//                sendNotification(geofenceTransitionDetails);
-                Log.i(TAG, geofenceTransitionDetails);
-            } else {
-                // Log the error.
-                Log.e(TAG, getString(geofenceTransition));
-            }
-
         }
-
-
-//    }
+    }
 
     /**
      * Gets transition details and returns them as a formatted string.
@@ -165,6 +110,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * @return The transition details formatted as String.
      */
     private String getGeofenceTransitionDetails(
+
             int geofenceTransition,
             List<Geofence> triggeringGeofences) {
 
@@ -191,7 +137,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
 
 
-        return geofenceTransitionString + ": " + triggeringGeofencesIdsString;
+        return phone;
     }
 
     /**
@@ -269,11 +215,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // Define the notification settings.
 
         //TODO: Download Icons
-        builder.setSmallIcon(R.drawable.ic_menu_send)
+        builder.setSmallIcon(R.drawable.ic_gate_casel)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.ic_menu_camera))
+                        R.drawable.ic_menu_send))
                 .setColor(Color.RED)
                 .setContentTitle(notificationDetails)
                 .setContentText(getString(R.string.geofence_transition_notification_text))
@@ -292,7 +238,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     }
 
-    private void makeCall(String phone) {
+    private Intent makeCall(String phone) {
         Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -302,11 +248,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            return null;
         }
         callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         callIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         startActivity(callIntent);
+        return callIntent;
     }
 
     /**
@@ -325,30 +272,4 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 return getString(R.string.unknown_geofence_transition);
         }
     }
-
-//    public void getPhoneState() {
-//        TelephonyManager telephonyManager;
-//        PhoneStateListener listener;
-//        // Get the telephony manager
-//        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-//
-//        // Create a new PhoneStateListener
-//        listener = new PhoneStateListener() {
-//            @Override
-//            public void onCallStateChanged(int state, String incomingNumber) {
-//                switch (state) {
-//                    case TelephonyManager.CALL_STATE_IDLE:
-//                        stateString = "Idle";
-//                        break;
-//                    case TelephonyManager.CALL_STATE_OFFHOOK:
-//                        stateString = "Off Hook";
-//                        break;
-//                    case TelephonyManager.CALL_STATE_RINGING:
-//                        stateString = "Ringing";
-//                        break;
-//                }
-//            }
-//        };
-//        telephonyManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
-//    }
 }

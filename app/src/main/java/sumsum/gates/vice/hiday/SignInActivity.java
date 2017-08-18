@@ -1,6 +1,8 @@
 package sumsum.gates.vice.hiday;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,12 +32,15 @@ public class SignInActivity extends AppCompatActivity {
     EditText etUserName;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         ButterKnife.bind(this);
+
+        sharedPreferences= getSharedPreferences("shred" , Context.MODE_PRIVATE);
     }
 
     @OnClick(R.id.btnSignIn)
@@ -46,6 +51,7 @@ public class SignInActivity extends AppCompatActivity {
         } else if (etUserName.getText().toString().length() < 3) {
             etUserName.setError("Name Should contain et least 3 letters");
         } else {
+            sharedPreferences.edit().putString("username" , etUserName.getText().toString()).commit();
             progressBar.setVisibility(View.VISIBLE);
             FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener(this,
                     new OnCompleteListener<AuthResult>() {
