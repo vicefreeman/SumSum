@@ -16,7 +16,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="8dp"
-            android:src="@drawable/orangeminilogo"
+            android:src="@drawable/whitemionilogo"
             android:id="@+id/ivGateProfile"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="8dp"

@@ -165,6 +165,7 @@ public class GateListFragment extends Fragment {
                     n = new AlertDialog.Builder(context)
                             .setTitle("Gate added")
                             .setMessage("You have added: " + gateName + " to your list ")
+                            .setIcon(R.drawable.blackminilogo)
                             .setPositiveButton("+ Add another", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {

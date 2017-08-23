@@ -3,6 +3,7 @@ package sumsum.gates.vice.hiday;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -95,7 +96,7 @@ public class UserGateListFragment extends Fragment {
         Fragment fragment;
         Context context;
         private String gateName = null;
-        AlertDialog dialog;
+        AlertDialog dialog , dialog2;
         ArrayList<String> gateData;
 
 
@@ -155,8 +156,8 @@ public class UserGateListFragment extends Fragment {
 
                     dialog = new AlertDialog.Builder(context)
                             .setTitle("Edit Gate")
-                            .setMessage("Would you like to edit" + gateName)
-                            .setPositiveButton("Edit gate data please", new DialogInterface.OnClickListener() {
+                            .setMessage("Would you like to edit " + gateName + " ?")
+                            .setPositiveButton("Edit gate", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -169,16 +170,30 @@ public class UserGateListFragment extends Fragment {
                                     context.startActivity(intent);
 
                                 }
-                            }).setCancelable(false).setIcon(R.drawable.ic_alert_attention)
-                            .setNegativeButton("I like to delete" + gateName, new DialogInterface.OnClickListener() {
+                            }).setCancelable(true).setIcon(R.drawable.blackminilogo)
+                            .setNegativeButton("Remove this gate ", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialog.dismiss();
-                                    userList.child(gateName).removeValue();
 
-                                    Intent intent = new Intent(context, MainActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    context.startActivity(intent);
+                                    dialog2 = new AlertDialog.Builder(context).setTitle("DELETE GATE")
+                                            .setMessage("You are about to delete this gate from your list. Are you sure?")
+                                            .setPositiveButton("Yes. Delete it", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    userList.child(gateName).removeValue();
+
+                                                    Intent intent = new Intent(context, MainActivity.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    context.startActivity(intent);
+                                                }
+                                            }).setCancelable(false).setIcon(R.drawable.ic_alert_attention)
+                                            .setNegativeButton("No. I changed my mind", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog2.dismiss();
+                                                }
+                                            }).show();
 
                                 }
                             })
