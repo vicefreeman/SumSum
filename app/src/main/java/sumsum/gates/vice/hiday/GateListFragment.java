@@ -48,8 +48,6 @@ public class GateListFragment extends Fragment {
     Unbinder unbinder;
     @BindView(R.id.etSearch)
     EditText etSearch;
-    @BindView(R.id.btnSearch)
-    Button btnSearch;
     @BindView(R.id.backBtn)
     Button backBtn;
 
@@ -125,25 +123,6 @@ public class GateListFragment extends Fragment {
         Intent intent = new Intent(getContext() , MainActivity.class);
         startActivity(intent);
     }
-
-
-    @OnClick(R.id.btnSearch)
-    public void onSearchBtnClicked() {
-        String searchText = etSearch.getText().toString();
-
-        if (searchText.isEmpty()) {
-            etSearch.setError("Search field is empty");
-        } else {
-            String s = String.valueOf(searchText.charAt(0));
-            String s1 = searchText.subSequence(1, searchText.length()).toString().toLowerCase();
-            Query gates = FirebaseDatabase.getInstance().getReference("Gates").orderByKey().startAt(s + s1);//TODO: Handle nulls
-
-            rvGateList.setLayoutManager(new LinearLayoutManager(getContext()));
-            rvGateList.setAdapter(new GateListAdapter(gates, getTargetFragment()));
-        }
-    }
-
-
 
     public static class GateListAdapter extends FirebaseRecyclerAdapter<Gate, GateListAdapter.GateListViewHolder> {
         Fragment fragment;

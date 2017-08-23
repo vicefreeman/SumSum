@@ -37,9 +37,9 @@
     <Button
         android:id="@+id/btnAdd"
 
-        android:layout_width="110dp"
+        android:layout_width="180dp"
         android:layout_height="45dp"
-        android:background="@drawable/btnaddgate"
+        android:background="@drawable/custom_addprivate_button"
         android:layout_alignBottom="@+id/backBtn"
         android:layout_alignRight="@+id/etPhoneNum"
         android:layout_alignEnd="@+id/etPhoneNum" />
@@ -63,7 +63,7 @@
 
     <Button
         android:id="@+id/backBtn"
-        android:background="@drawable/btnback"
+        android:background="@drawable/custom_back_button"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_margin="16dp"
