@@ -26,8 +26,6 @@ public class ContactUsFragment extends Fragment {
 
     @BindView(R.id.etTitle)
     EditText etTitle;
-    @BindView(R.id.etPhone)
-    EditText etPhone;
     @BindView(R.id.etPublisher)
     EditText etPublisher;
     @BindView(R.id.etEmail)
@@ -113,14 +111,6 @@ public class ContactUsFragment extends Fragment {
         this.etTitle = etTitle;
     }
 
-    public EditText getEtPhone() {
-        return etPhone;
-    }
-
-    public void setEtPhone(EditText etPhone) {
-        this.etPhone = etPhone;
-    }
-
     public EditText getEtPublisher() {
         return etPublisher;
     }
@@ -149,7 +139,6 @@ public class ContactUsFragment extends Fragment {
     public String toString() {
         return "ContactUsFragment{" +
                 "etTitle=" + etTitle +
-                ", etPhone=" + etPhone +
                 ", etPublisher=" + etPublisher +
                 ", etEmail=" + etEmail +
                 ", etContent=" + etContent +

@@ -51,22 +51,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:text="Phone"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/etPhone"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_weight="0.75"
-                android:background="@drawable/edittextstyle"
-                android:ems="10"
-                android:padding="8dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -154,14 +138,14 @@
         android:layout_width="66dp"
         android:layout_height="66dp"
         android:layout_marginLeft="16dp"
-android:background="@drawable/btncancel"
+android:background="@drawable/custom_cancel_button"
         app:layout_constraintBottom_toBottomOf="@+id/btnSend"
 
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <Button
         android:id="@+id/btnSend"
-        android:background="@drawable/btnsend"
+        android:background="@drawable/custom_send_button"
         android:layout_width="68dp"
         android:layout_height="68dp"
         android:layout_margin="16dp"
