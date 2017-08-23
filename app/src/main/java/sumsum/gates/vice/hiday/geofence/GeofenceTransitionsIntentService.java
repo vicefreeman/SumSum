@@ -1,5 +1,7 @@
 package sumsum.gates.vice.hiday.geofence;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -28,6 +31,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +45,14 @@ public class GeofenceTransitionsIntentService extends IntentService {
     String phone;
     SharedPreferences preferences;
     float speed;
+    private FusedLocationProviderClient mFusedLocationClient;
+
     /**
      * This constructor is required, and calls the super IntentService(String)
      * constructor with the name for a worker thread.
      */
+
+
     public GeofenceTransitionsIntentService() {
         // Use the TAG to name the worker thread.
 
@@ -59,13 +69,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
+            getSpeed();
 
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                speed =  location.getSpeed();
-            }
-        };
+
 
         preferences = getSharedPreferences("shred", Context.MODE_PRIVATE);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
@@ -83,22 +90,27 @@ public class GeofenceTransitionsIntentService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ) {
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            if ((speed > 7)) {
-                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
-            }else {
-                sendNotification("Enter Click to open gate");
-            };
 
-        }else if(geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){}else {
-            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            if ((speed > 7)) {
-                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
-            }else {
-                sendNotification("Dewll Click to open gate");
-            }
+            sendNotification("GEOFENCE_TRANSITION_ENTER: " + speed);
+
+//            if ((speed > 7)) {
+//                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
+//            } else {
+//                sendNotification("Enter Click to open gate");
+//            }
+//
+        } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+
+            sendNotification("GEOFENCE_TRANSITION_EXIT: " + speed);
+//        } else {
+//            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+//            if ((speed > 7)) {
+//                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
+        } else {
+            sendNotification("GEOFENCE_TRANSITION_DWELL: "+ speed);
         }
     }
 
@@ -271,5 +283,26 @@ public class GeofenceTransitionsIntentService extends IntentService {
             default:
                 return getString(R.string.unknown_geofence_transition);
         }
+    }
+
+    private void getSpeed() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+        }
+
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+               speed =  task.getResult().getSpeed();
+            }
+        });
     }
 }

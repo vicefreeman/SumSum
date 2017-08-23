@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import sumsum.gates.vice.hiday.Modules.Gate;
@@ -22,9 +23,14 @@ import sumsum.gates.vice.hiday.Modules.Gate;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +44,7 @@ public class UserGateListFragment extends Fragment {
     RecyclerView rvUserLists;
     Unbinder unbinder;
     String s;
-
+    ProgressBar progressBar;
     Button btnAddAnother;
 
 
@@ -52,6 +58,7 @@ public class UserGateListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_gate_list, container, false);
         unbinder = ButterKnife.bind(this, view);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar2);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser == null){
@@ -62,7 +69,6 @@ public class UserGateListFragment extends Fragment {
 
         rvUserLists.setLayoutManager(new LinearLayoutManager(getContext()));
         rvUserLists.setAdapter(new UserGateListFragment.UserGateListAdapter(ref, this));
-
         btnAddAnother = (Button) view.findViewById(R.id.btnAddAnotherGate);
 
         btnAddAnother.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +78,7 @@ public class UserGateListFragment extends Fragment {
 
             }
         });
-
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
         return view;
 
     }
@@ -83,12 +89,14 @@ public class UserGateListFragment extends Fragment {
         unbinder.unbind();
     }
 
+
     //2)FirebaseRecyclerAdapter
     public static class UserGateListAdapter extends FirebaseRecyclerAdapter<Gate, UserGateListAdapter.UserGateListViewHolder> {
         Fragment fragment;
         Context context;
         private String gateName = null;
         AlertDialog dialog;
+        ArrayList<String> gateData;
 
 
 
@@ -105,41 +113,72 @@ public class UserGateListFragment extends Fragment {
             UserGateListFragment.UserGateListAdapter.UserGateListViewHolder vh =  super.onCreateViewHolder(parent, viewType);
             vh.userGateListFragment = fragment;
             context = parent.getContext();
+            gateData = new ArrayList<>();
             return vh;
         }
 
         @Override
         protected void populateViewHolder(final UserGateListFragment.UserGateListAdapter
-                .UserGateListViewHolder viewHolder, final Gate model, int position) {
+                .UserGateListViewHolder viewHolder, final Gate model, final int position) {
             viewHolder.tvUserGateName.setText(model.getName());
             viewHolder.btnDeleteGate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     gateName = viewHolder.tvUserGateName.getText().toString();
                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    final DatabaseReference userList = FirebaseDatabase.getInstance().getReference("UserGatesList").child(uid).child(gateName);
+                    final DatabaseReference userList = FirebaseDatabase.getInstance().getReference("UserGatesList").child(uid);
+                    userList.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                if (postSnapshot.getKey().equals(gateName)) {
+                                    String lang = postSnapshot.child("lang").getValue().toString();
+                                    String lat = postSnapshot.child("lat").getValue().toString();
+                                    String phoneNumber = postSnapshot.child("phone").getValue().toString();
+                                    String distance = postSnapshot.child("distance").getValue().toString();
+                                    gateData.add(lang);
+                                    gateData.add(lat);
+                                    gateData.add(gateName);
+                                    gateData.add(phoneNumber);
+                                    gateData.add(distance);
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
 
 
                     dialog = new AlertDialog.Builder(context)
-                            .setTitle("Delete Gate")
-                            .setMessage("Are you sure you want to delete" + gateName + " from your list?")
-                            .setPositiveButton("Yes please", new DialogInterface.OnClickListener() {
+                            .setTitle("Edit Gate")
+                            .setMessage("Would you like to edit" + gateName)
+                            .setPositiveButton("Edit gate data please", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    userList.removeValue();
+
 
                                     dialog.dismiss();
 
-                                    Intent intent = new Intent(context, MainActivity.class);
+                                    Intent intent = new Intent(context, MapsActivity.class);
+                                    intent.putExtra("gateData", gateData);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     context.startActivity(intent);
 
                                 }
                             }).setCancelable(false).setIcon(R.drawable.ic_alert_attention)
-                            .setNegativeButton("No , I changed my mind", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("I like to delete" + gateName, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialog.dismiss();
+                                    userList.child(gateName).removeValue();
+
+                                    Intent intent = new Intent(context, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    context.startActivity(intent);
 
                                 }
                             })
@@ -151,7 +190,6 @@ public class UserGateListFragment extends Fragment {
 
 
         }
-
 
         //1)ViewHolder
         public static class UserGateListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

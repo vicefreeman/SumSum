@@ -145,19 +145,19 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
         //Add Main gates to the DB
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Gates");
-        Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
-        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
-        Gate g3 = new Gate(32.0844269,34.8029073 ,1200, "0505978532", "HackerUוו", "HackerU test");
-        Gate g4 = new Gate(32.2956391, 34.8762752 ,200, "0543532447", "Home", "Home Test");
-        Gate g5 = new Gate(32.149635, 35.108194 ,200, "0543582460", "Nofim Main Gate", "Nofim Main Gate");
-
-        myRef.child(g.getName()).setValue(g);
-        myRef.child(g2.getName()).setValue(g2);
-        myRef.child(g3.getName()).setValue(g3);
-        myRef.child(g4.getName()).setValue(g4);
-        myRef.child(g5.getName()).setValue(g5);
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("Gates");
+//        Gate g = new Gate(32.1932321,34.9529492 ,200, "0543063923", "NirEliyahu East Gate", "NirEliyahu East Gate");
+//        Gate g2 = new Gate(32.1957065,34.9473632 ,200, "0543063921", "NirEliyahu West Gate", "NirEliyahu West Gate");
+//        Gate g3 = new Gate(32.0844269,34.8029073 ,1200, "0505978532", "HackerUוו", "HackerU test");
+//        Gate g4 = new Gate(32.2956391, 34.8762752 ,200, "0543532447", "Home", "Home Test");
+//        Gate g5 = new Gate(32.149635, 35.108194 ,200, "0543582460", "Nofim Main Gate", "Nofim Main Gate");
+//
+//        myRef.child(g.getName()).setValue(g);
+//        myRef.child(g2.getName()).setValue(g2);
+//        myRef.child(g3.getName()).setValue(g3);
+//        myRef.child(g4.getName()).setValue(g4);
+//        myRef.child(g5.getName()).setValue(g5);
 
     }
 

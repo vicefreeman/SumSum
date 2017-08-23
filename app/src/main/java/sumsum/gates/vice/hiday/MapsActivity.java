@@ -1,6 +1,7 @@
 package sumsum.gates.vice.hiday;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -22,11 +23,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AddGate.OnRadiusUpdateListener {
 
     private GoogleMap mMap;
     String radius;
     private Circle mCircle;
+    ArrayList<String> gateData;
 
 
     FusedLocationProviderClient client;
@@ -35,14 +39,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Intent intent =getIntent();
+        gateData = intent.getStringArrayListExtra("gateData");
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
         SupportMapFragment mapFragment = new SupportMapFragment();
-
+        AddGate addGate = new AddGate();
+        if (gateData != null) {
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("gateData", gateData);
+            addGate.setArguments(bundle);
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frame1, mapFragment)
-                .replace(R.id.frame2, new AddGate())
+                .replace(R.id.frame2, addGate)
                 .commit();
 
         //tell me when the map is loaded
@@ -91,7 +102,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .fillColor(Color.argb(100, 0, 188, 212))
                         .strokeWidth(8).clickable(true);
 
-
+                if (gateData != null){
+                    LatLng n = new LatLng(Double.valueOf(gateData.get(0)),Double.valueOf(gateData.get(1)));
+                    circleOptions.center(n);
+                }
                 mCircle = map.addCircle(circleOptions);
 
                 final Circle finalMCircle = mCircle;

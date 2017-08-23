@@ -24,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -45,7 +47,7 @@ public class AddGate extends Fragment {
     SharedPreferences sharedPreferences;
     OnRadiusUpdateListener listener;
     AlertDialog n;
-
+    ArrayList<String> gateData = new ArrayList<>();
     Button btnBack;
 
 
@@ -63,12 +65,21 @@ public class AddGate extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            gateData = getArguments().getStringArrayList("gateData");
+        }
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_gate, container, false);
         unbinder = ButterKnife.bind(this, view);
         activity = getActivity();
         sharedPreferences = activity.getSharedPreferences("shred" ,Context.MODE_PRIVATE);
         btnBack = (Button) view.findViewById(R.id.backBtn);
+
+        if (gateData.size()>0){
+            etGateName.setText(gateData.get(2));
+            etPhoneNum.setText(gateData.get(3));
+            etRadius.setText(gateData.get(4));
+        }
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
