@@ -51,37 +51,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     Activity activity;
-
-    public void moveToContact(MenuItem item) {
-        getSupportFragmentManager().
-                beginTransaction().
-                replace(sumsum.gates.vice.hiday.R.id.mainContainer, new ContactUsFragment()).
-                commit();
-
-    }
-
-    public void showSplash(MenuItem item) {
-
-        Intent intent = new Intent(this , IntroActivity.class);
-        startActivity(intent);
-    }
-
-    public void showOurInfo(MenuItem item) {
-        getSupportFragmentManager().
-                beginTransaction().
-                replace(sumsum.gates.vice.hiday.R.id.mainContainer, new AboutUsFragment()).
-                commit();
-
-    }
-
-    public void returnToPage(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-
     private enum PendingGeofenceTask {ADD, REMOVE, NONE}
-
     private GeofencingClient mGeofencingClient;
     private ArrayList<Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
@@ -89,11 +59,15 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String uid;
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPref  = getSharedPreferences("shred" ,Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,6 +88,35 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
     }
 
+    public void moveToContact(MenuItem item) {
+        getSupportFragmentManager().
+                beginTransaction().
+                replace(sumsum.gates.vice.hiday.R.id.mainContainer, new ContactUsFragment()).
+                commit();
+
+    }
+
+    public void showSplash(MenuItem item) {
+        SharedPreferences preferences = getSharedPreferences("shred" , Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putBoolean("show" , true).commit();
+        Intent intent = new Intent(this , IntroActivity.class);
+        startActivity(intent);
+    }
+
+    public void showOurInfo(MenuItem item) {
+        getSupportFragmentManager().
+                beginTransaction().
+                replace(sumsum.gates.vice.hiday.R.id.mainContainer, new AboutUsFragment()).
+                commit();
+
+    }
+
+    public void returnToPage(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -123,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
 
     private void checkCurrentUser() {
-
         if (FirebaseAuth.getInstance().equals(null) || FirebaseAuth.getInstance().getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -297,8 +299,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                                     Geofence.GEOFENCE_TRANSITION_EXIT )
                             .build();
                     geofensList.add(geofence);
-                    SharedPreferences sharedPref = getSharedPreferences("shred" ,Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPref.edit();
 
                     editor.putString(postSnapshot.child("name").getValue().toString().toLowerCase(), phoneNumber);
 
