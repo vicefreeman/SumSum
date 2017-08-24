@@ -1,6 +1,7 @@
 package sumsum.gates.vice.hiday;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -53,4 +54,5 @@ public class NoGateFragment extends Fragment {
                 addToBackStack("GateListFragment").
                 commit();
     }
+
 }

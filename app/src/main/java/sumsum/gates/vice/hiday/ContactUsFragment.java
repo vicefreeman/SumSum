@@ -74,8 +74,7 @@ public class ContactUsFragment extends Fragment {
     protected void sendEmail() {
         Log.d("Send email", "");
 
-        String[] TO = {"vicepribo@gmail.com"};
-        String[] CC = {"xyz@gmail.com"};
+        String[] TO = {"sumsumgates@gmail.com"};
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setData(Uri.parse("mailto:"));
         emailIntent.setType("text/plain");

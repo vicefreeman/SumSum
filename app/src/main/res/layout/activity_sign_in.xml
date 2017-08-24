@@ -31,12 +31,12 @@
 
     <Button
         android:id="@+id/btnSignIn"
-        android:layout_width="110dp"
+        android:layout_width="115dp"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="21dp"
-        android:background="@drawable/btnenter"
+        android:background="@drawable/custom_enter_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -56,7 +56,7 @@
         android:ems="14"
         android:hint="Your name"
         android:inputType="textPersonName"
-        android:padding="8dp"
+        android:padding="16dp"
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/btnSignIn"
         app:layout_constraintHorizontal_bias="0.0"
@@ -75,10 +75,9 @@
         android:fontFamily="sans-serif-condensed"
         android:gravity="center"
         android:padding="5dp"
-
-        android:text="Please log in to access your gates"
+        android:text="Please login to access our service"
         android:textColor="#000000"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
@@ -89,6 +88,7 @@
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:textColor="#000"
         android:fontFamily="sans-serif-condensed"
         android:text="Welcome!"
 

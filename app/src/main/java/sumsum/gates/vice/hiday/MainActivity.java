@@ -52,12 +52,31 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     Activity activity;
 
-    public void moveToContect(MenuItem item) {
+    public void moveToContact(MenuItem item) {
         getSupportFragmentManager().
                 beginTransaction().
                 replace(sumsum.gates.vice.hiday.R.id.mainContainer, new ContactUsFragment()).
                 commit();
 
+    }
+
+    public void showSplash(MenuItem item) {
+
+        Intent intent = new Intent(this , IntroActivity.class);
+        startActivity(intent);
+    }
+
+    public void showOurInfo(MenuItem item) {
+        getSupportFragmentManager().
+                beginTransaction().
+                replace(sumsum.gates.vice.hiday.R.id.mainContainer, new AboutUsFragment()).
+                commit();
+
+    }
+
+    public void returnToPage(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
 
@@ -80,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         setSupportActionBar(toolbar);
         activity = this;
 
+
         getSupportActionBar().setIcon(R.drawable.barlogo);
 
         mAuth = FirebaseAuth.getInstance();
@@ -90,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                 checkCurrentUser();
             }
         };
+
+
     }
 
     @Override
@@ -489,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
                             getSupportFragmentManager().
                                     beginTransaction().
-                                    replace(R.id.topContainer , new GreetingFragment()).
+                                    replace(R.id.topContainer, new GreetingFragment()).
                                     replace(R.id.bottomContainer, new NoGateFragment()).
                                     commit();
                         }

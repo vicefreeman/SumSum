@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    >
+
+
+    <ImageView
+        android:id="@+id/imLogo"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:src="@drawable/sumsumiconwhite"
+
+        android:layout_marginTop="24dp"
+        />
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WELCOME to SumSum!"
+        android:fontFamily="cu"
+        android:textStyle="bold"
+        android:textColor="#fff"
+        android:textSize="35sp"
+        android:padding="16dp"
+        android:gravity="center"
+        android:layout_below="@+id/imLogo" />
+
+
+
+
+    <TextView
+        android:id="@+id/tvAbout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="You will NEVER need to call your gates again."
+        android:textColor="#000"
+        android:textSize="25sp"
+        android:textStyle=""
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/tvWelcome"
+        android:layout_centerHorizontal="true" />
+
+
+    <TextView
+        android:id="@+id/tvBegin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LET'S BEGIN!"
+        android:textStyle="bold"
+        android:textColor="#fff"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:layout_below="@+id/tvAbout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="33dp" />
+    
+    
+</LinearLayout>

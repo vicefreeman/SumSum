@@ -15,7 +15,7 @@
     -->
     <application
         android:allowBackup="true"
-        android:icon="@drawable/mainlogo"
+        android:icon="@drawable/sumsumicon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -38,6 +38,8 @@
             android:label="Sign in to Sum Sum"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".IntroActivity"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
