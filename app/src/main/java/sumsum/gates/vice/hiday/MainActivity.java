@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
                             .setCircularRegion(lat, lang, distance)
                             .setExpirationDuration(Geofence.NEVER_EXPIRE)
                             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                                    Geofence.GEOFENCE_TRANSITION_EXIT )
+                                    Geofence.GEOFENCE_TRANSITION_EXIT | Geofence.GEOFENCE_TRANSITION_DWELL)
                             .build();
                     geofensList.add(geofence);
 

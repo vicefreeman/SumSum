@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -70,8 +71,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
-            getSpeed();
-
+        getSpeed();
 
 
         preferences = getSharedPreferences("shred", Context.MODE_PRIVATE);
@@ -90,28 +90,34 @@ public class GeofenceTransitionsIntentService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+        if (geofenceTransition != Geofence.GEOFENCE_TRANSITION_EXIT) {
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
             sendNotification("You just entered your gate zone " + speed);
 
-//            if ((speed > 7)) {
-//                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
-//            } else {
-//                sendNotification("Enter Click to open gate");
-//            }
-//
-        } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+            if ((speed > 1.95)) {
 
-            sendNotification("You exited your gate zone" + speed);
-//        } else {
-//            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-//            if ((speed > 7)) {
-//                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
-        } else {
-            sendNotification("You are in the zone of the gate"+ speed);
+                getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences);
+                makeCall(phone);
+            } else {
+                sendNotification("Enter Click to open gate");
+            }
+
+
         }
+//        else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+//
+//            sendNotification("You exited your gate zone " + speed);
+////
+//        } else {
+//            sendNotification("You are in the zone of the gate "+ speed);
+//
+//            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+//            getGeofenceTransitionDetails(geofenceTransition , triggeringGeofences);
+//            makeCall(phone);
+//
+//        }
     }
 
     /**
@@ -152,56 +158,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
         return phone;
     }
 
-    /**
-     * Posts a notification in the notification bar when a transition is detected.
-     * If the user clicks the notification, control goes to the MainActivity.
-     */
-    private void sendNotificationWithCall(String notificationDetails) {
-        // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
-        //TODO: Try to use Context as THIS
-
-        // Construct a task stack.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Add the main Activity to the task stack as the parent.
-        stackBuilder.addParentStack(MainActivity.class);
-
-        // Push the content Intent onto the stack.
-        stackBuilder.addNextIntent(notificationIntent);
-
-        // Get a PendingIntent containing the entire back stack.
-        PendingIntent notificationPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Get a notification builder that's compatible with platform versions >= 4
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        // Define the notification settings.
-
-        //TODO: Download Icons
-        builder.setSmallIcon(R.drawable.whitemionilogo)
-                // In a real app, you may want to use a library like Volley
-                // to decode the Bitmap.
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.whitemionilogo))
-                .setColor(Color.CYAN)
-                .setContentTitle(notificationDetails)
-                .setContentText(getString(R.string.geofence_transition_notification_text))
-                .setContentIntent(notificationPendingIntent);
-
-        // Dismiss notification once the user touches it.
-        builder.setAutoCancel(true);
-
-        // Get an instance of the Notification manager
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Issue the notification
-        mNotificationManager.notify(0, builder.build());
-
-
-    }
 
     private void sendNotification(String notificationDetails) {
         // Create an explicit content Intent that starts the main Activity.
@@ -286,8 +242,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
     }
 
     private void getSpeed() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -295,14 +251,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-
+            return;
         }
-
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-               speed =  task.getResult().getSpeed();
-            }
-        });
+        Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        speed = currentLocation.getSpeed();
     }
 }
