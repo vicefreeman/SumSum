@@ -161,7 +161,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     private void sendNotification(String notificationDetails) {
         // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent notificationIntent = makeCall(phone);
         //TODO: Try to use Context as THIS
 
         // Construct a task stack.
