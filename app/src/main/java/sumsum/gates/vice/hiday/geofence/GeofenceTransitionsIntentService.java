@@ -71,7 +71,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
-        getSpeed();
+            getSpeed();
+
 
 
         preferences = getSharedPreferences("shred", Context.MODE_PRIVATE);
@@ -101,7 +102,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences);
                 makeCall(phone);
             } else {
-                sendNotification("Enter Click to open gate");
+
+                sendDwellNotification("Need to open the gate?");
             }
 
 
@@ -109,7 +111,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 //        else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
 //
 //            sendNotification("You exited your gate zone " + speed);
-////
+//
 //        } else {
 //            sendNotification("You are in the zone of the gate "+ speed);
 //
@@ -119,6 +121,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
 //
 //        }
     }
+
+
 
     /**
      * Gets transition details and returns them as a formatted string.
@@ -161,8 +165,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     private void sendNotification(String notificationDetails) {
         // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = makeCall(phone);
-        //TODO: Try to use Context as THIS
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
 
         // Construct a task stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -182,7 +185,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         // Define the notification settings.
 
-        //TODO: Download Icons
         builder.setSmallIcon(R.drawable.whitemionilogo)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
@@ -196,6 +198,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // Dismiss notification once the user touches it.
         builder.setAutoCancel(true);
 
+
         // Get an instance of the Notification manager
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -206,7 +209,52 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     }
 
+    private void sendDwellNotification(String notificationDetails) {
+        // Create an explicit content Intent that starts the main Activity.
+        Intent notificationIntent = new Intent(getApplicationContext() , MainActivity.class);
+
+        // Construct a task stack.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Add the main Activity to the task stack as the parent.
+        stackBuilder.addParentStack(MainActivity.class);
+
+        // Push the content Intent onto the stack.
+        stackBuilder.addNextIntent(notificationIntent);
+
+        // Get a PendingIntent containing the entire back stack.
+        PendingIntent notificationPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Get a notification builder that's compatible with platform versions >= 4
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        // Define the notification settings.
+
+
+        builder.setSmallIcon(R.drawable.whitemionilogo)
+                // In a real app, you may want to use a library like Volley
+                // to decode the Bitmap.
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.drawable.whitemionilogo))
+                .setColor(Color.CYAN)
+                .setContentTitle(notificationDetails)
+                .setContentText(getString(R.string.geofence_dwell_notification_text))
+                .setContentIntent(notificationPendingIntent);
+
+        // Dismiss notification once the user touches it.
+        builder.setAutoCancel(true);
+
+        // Get an instance of the Notification manager
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Issue the notification
+        mNotificationManager.notify(0, builder.build());
+    }
+
     private Intent makeCall(String phone) {
+
         Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
