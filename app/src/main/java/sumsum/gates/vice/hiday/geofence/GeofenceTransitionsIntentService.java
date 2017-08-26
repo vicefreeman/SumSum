@@ -94,7 +94,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
-            sendNotification("GEOFENCE_TRANSITION_ENTER: " + speed);
+            sendNotification("You just entered your gate zone " + speed);
 
 //            if ((speed > 7)) {
 //                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
@@ -104,13 +104,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
 //
         } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
 
-            sendNotification("GEOFENCE_TRANSITION_EXIT: " + speed);
+            sendNotification("You exited your gate zone" + speed);
 //        } else {
 //            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 //            if ((speed > 7)) {
 //                makeCall(getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences));
         } else {
-            sendNotification("GEOFENCE_TRANSITION_DWELL: "+ speed);
+            sendNotification("You are in the zone of the gate"+ speed);
         }
     }
 
@@ -180,12 +180,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // Define the notification settings.
 
         //TODO: Download Icons
-        builder.setSmallIcon(R.drawable.ic_menu_send)
+        builder.setSmallIcon(R.drawable.whitemionilogo)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.ic_menu_camera))
-                .setColor(Color.RED)
+                        R.drawable.whitemionilogo))
+                .setColor(Color.CYAN)
                 .setContentTitle(notificationDetails)
                 .setContentText(getString(R.string.geofence_transition_notification_text))
                 .setContentIntent(notificationPendingIntent);
@@ -227,12 +227,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // Define the notification settings.
 
         //TODO: Download Icons
-        builder.setSmallIcon(R.drawable.ic_gate_casel)
+        builder.setSmallIcon(R.drawable.whitemionilogo)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.ic_menu_send))
-                .setColor(Color.RED)
+                        R.drawable.whitemionilogo))
+                .setColor(Color.CYAN)
                 .setContentTitle(notificationDetails)
                 .setContentText(getString(R.string.geofence_transition_notification_text))
                 .setContentIntent(notificationPendingIntent);
