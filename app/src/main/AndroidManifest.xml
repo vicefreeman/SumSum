@@ -26,16 +26,14 @@
             android:name=".MainActivity"
             android:label="Sum Sum"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".SignInActivity"
             android:label="Sign in to Sum Sum"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".IntroActivity"
+        <activity
+            android:name=".IntroActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,6 +59,8 @@
             android:icon="@drawable/barlogo"
             android:label="Create a custom Gate"
             android:screenOrientation="portrait" />
+
+        <service android:name=".geofence.LocationServic" android:exported="false"></service>
     </application>
 
 </manifest>

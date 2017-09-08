@@ -23,15 +23,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import sumsum.gates.vice.hiday.Modules.Gate;
 import sumsum.gates.vice.hiday.geofence.GeofenceErrorMessages;
 import sumsum.gates.vice.hiday.geofence.GeofenceTransitionsIntentService;
+import sumsum.gates.vice.hiday.geofence.LocationServic;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnCompleteListener<Void>{
 
@@ -61,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private String uid;
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
+    private Intent update;
 
 
     @Override
@@ -201,8 +200,11 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     }
 
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        startService(update);
+    }
 
     @Override
     protected void onStop() {
@@ -216,6 +218,9 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+        update = new Intent(this, LocationServic.class);
+        update.setAction("udate");
+
 
     }
 
@@ -270,6 +275,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         intent.putExtra("uid", uid);
+        intent.setAction("sumsum.gates.vice.hiday");
+
         //intent.putExtra("number", )
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
 
@@ -525,4 +532,5 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
 
     }
+
 }

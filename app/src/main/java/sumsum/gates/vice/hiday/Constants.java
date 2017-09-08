@@ -9,6 +9,15 @@ final class Constants {
     private Constants() {
     }
 
+
+    public interface ACTION {
+        public static String MAIN_ACTION = "com.truiton.foregroundservice.action.main";
+        public static String PREV_ACTION = "com.truiton.foregroundservice.action.prev";
+        public static String PLAY_ACTION = "com.truiton.foregroundservice.action.play";
+        public static String NEXT_ACTION = "com.truiton.foregroundservice.action.next";
+        public static String STARTFOREGROUND_ACTION = "com.truiton.foregroundservice.action.startforeground";
+        public static String STOPFOREGROUND_ACTION = "com.truiton.foregroundservice.action.stopforeground";
+    }
     private static final String PACKAGE_NAME = "com.google.android.gms.location.Geofence";
 
     static final String GEOFENCES_ADDED_KEY = PACKAGE_NAME + ".GEOFENCES_ADDED_KEY";
