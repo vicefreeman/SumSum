@@ -1,10 +1,13 @@
 package sumsum.gates.vice.hiday;
 
+import android.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -24,6 +27,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AddGate.OnRadiusUpdateListener {
 
@@ -31,16 +35,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String radius;
     private Circle mCircle;
     ArrayList<String> gateData;
-
+    CircleOptions circleOptions;
+    LatLng latLng;
+    Boolean hasMarker = true;
+    SharedPreferences preferences;
+    SharedPreferences.Editor edit;
+    Marker marker = null;
 
     FusedLocationProviderClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        preferences = getSharedPreferences("shred" , Context.MODE_PRIVATE);
+        edit = preferences.edit();
+        radius = preferences.getString("radius", "200");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         Intent intent =getIntent();
         gateData = intent.getStringArrayListExtra("gateData");
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
         SupportMapFragment mapFragment = new SupportMapFragment();
@@ -84,67 +97,134 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private void setUpMap(final GoogleMap map) {
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(final LatLng latLng) {
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
-                Toast.makeText(MapsActivity.this, latLng.toString(), Toast.LENGTH_SHORT).show();
-                SharedPreferences preferences = getSharedPreferences("shred" , Context.MODE_PRIVATE);
-                SharedPreferences.Editor edit = preferences.edit();
-                radius = preferences.getString("radius", "200");
-                edit.putString("lat", String.valueOf(latLng.latitude));
-                edit.putString("lng", String.valueOf(latLng.longitude));
-                edit.commit();
-                final CircleOptions circleOptions = new CircleOptions()
-                        .center(latLng)
-                        .radius(Double.valueOf(radius))
-                        .strokeColor(Color.YELLOW)
-                        .fillColor(Color.argb(100, 0, 188, 212))
-                        .strokeWidth(8).clickable(true);
 
-                if (gateData != null){
-                    LatLng n = new LatLng(Double.valueOf(gateData.get(0)),Double.valueOf(gateData.get(1)));
-                    circleOptions.center(n);
-                }
-                mCircle = map.addCircle(circleOptions);
-
-                final Circle finalMCircle = mCircle;
-
-                map.addMarker(new MarkerOptions()
-                        .position(latLng).title("My Gate").snippet("Is here")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
-                        //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                        .draggable(true));
-
-
-                map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                    @Override
-                    public void onMarkerDragStart(Marker marker) {
-
-                    }
-
-                    @Override
-                    public void onMarkerDrag(Marker marker) {
-                        finalMCircle.setCenter(marker.getPosition());
-                    }
-
-                    @Override
-                    public void onMarkerDragEnd(Marker marker) {
-
-                    }
-                });
-
-
+        if (gateData == null) {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
             }
-        });
+            latLng = new LatLng(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()
+                    , locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+            edit.putString("lat", String.valueOf(latLng.latitude));
+            edit.putString("lng", String.valueOf(latLng.longitude));
+            edit.commit();
+            marker = map.addMarker(new MarkerOptions()
+                    .position(latLng).title("My Gate").snippet("Is here")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                    .draggable(true));
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(latLng)
+                    .radius(Double.valueOf(radius))
+                    .strokeColor(Color.YELLOW)
+                    .fillColor(Color.argb(100, 0, 188, 212))
+                    .strokeWidth(8).clickable(true);
+            circleOptions.center(latLng);
+            mCircle =  map.addCircle(circleOptions);
+            map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDrag(Marker marker) {
+                    mCircle.setCenter(marker.getPosition());
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+
+                }
+            });
+        }else {
+            Double lat = Double.valueOf(gateData.get(1));
+            Double lang = Double.valueOf(gateData.get(0));
+            latLng = new LatLng(lat,lang);
+            edit.putString("lat", String.valueOf(latLng.latitude));
+            edit.putString("lng", String.valueOf(latLng.longitude));
+            edit.commit();
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+            marker = map.addMarker(new MarkerOptions()
+                    .position(latLng).title("My Gate").snippet("Is here")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                    .draggable(true));
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(latLng)
+                    .radius(Double.valueOf(gateData.get(4)))
+                    .strokeColor(Color.YELLOW)
+                    .fillColor(Color.argb(100, 0, 188, 212))
+                    .strokeWidth(8).clickable(true);
+            circleOptions.center(latLng);
+            mCircle = map.addCircle(circleOptions);
+            map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDrag(Marker marker) {
+                    mCircle.setCenter(marker.getPosition());
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+
+                }
+            });
+
+        }
+
 
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
-                Toast.makeText(MapsActivity.this, "Cleared all markers", Toast.LENGTH_SHORT).show();
+                if (marker != null) {
+                    map.clear();
+                    marker =null;
+                    Toast.makeText(MapsActivity.this, "Cleared all markers", Toast.LENGTH_SHORT).show();
+                } else {
+                    marker = map.addMarker(new MarkerOptions()
+                            .position(latLng).title("My Gate").snippet("Is here")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+                            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                            .draggable(true));
+                    CircleOptions circleOptions = new CircleOptions()
+                            .center(latLng)
+                            .radius(Double.valueOf(radius))
+                            .strokeColor(Color.YELLOW)
+                            .fillColor(Color.argb(100, 0, 188, 212))
+                            .strokeWidth(8).clickable(true);
+                    circleOptions.center(latLng);
+                    mCircle = map.addCircle(circleOptions);
+                    map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                        @Override
+                        public void onMarkerDragStart(Marker marker) {
 
-                map.clear();
+                        }
+
+                        @Override
+                        public void onMarkerDrag(Marker marker) {
+                            mCircle.setCenter(marker.getPosition());
+                        }
+
+                        @Override
+                        public void onMarkerDragEnd(Marker marker) {
+
+                        }
+                    });
+                }
+                hasMarker = true;
             }
         });
 
@@ -176,5 +256,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onRadiusUpdated(String radius) {
         mCircle.setRadius(Double.valueOf(radius));
+    }
+
+    private void animateMap (GoogleMap map, LatLng latLng){
+
+
     }
 }
