@@ -42,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnCompleteListener<Void>{
 
@@ -49,8 +50,11 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     Activity activity;
+    private ArrayList <Geofence> mGeofenceListUpdat;
+
     private enum PendingGeofenceTask {ADD, REMOVE, NONE}
     private GeofencingClient mGeofencingClient;
+    private GeofencingClient mGeofencingClientUpdate;
     private ArrayList<Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
     private PendingGeofenceTask mPendingGeofenceTask = PendingGeofenceTask.ADD;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
     private Intent update;
+    private Intent geofence;
 
 
     @Override
@@ -153,7 +158,8 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     private void initWithUser() {
 
         // Empty list for storing geofences.
-        mGeofenceList = populateGeofenceList();
+        mGeofenceList = populateGeofenceList(Double.valueOf(0.0), Float.valueOf(0));
+        mGeofenceListUpdat = populateGeofenceList(Double.valueOf(0.00005), Float.valueOf(2000));
 
         // Initially set the PendingIntent used in addGeofences() and removeGeofences() to null.
         mGeofencePendingIntent = null;
@@ -163,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 //        populateGeofenceList();
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
+        mGeofencingClientUpdate = LocationServices.getGeofencingClient(this);
 
         checkIfUserHaveGatesList();
 
@@ -184,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
 
     }
 
-    private GeofencingRequest getGeofencingRequest() {
+    private GeofencingRequest getGeofencingRequest(List <Geofence> list) {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
 
         // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
@@ -193,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
 
         // Add the geofences to be monitored by geofencing service.
-        builder.addGeofences(mGeofenceList);
+        builder.addGeofences(list);
 
         // Return a GeofencingRequest.
         return builder.build();
@@ -203,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        startService(update);
     }
 
     @Override
@@ -220,8 +226,9 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
         mAuth.addAuthStateListener(mAuthListener);
         update = new Intent(this, LocationServic.class);
         update.setAction("udate");
-
-
+        geofence = new Intent(this, GeofenceTransitionsIntentService.class);
+        geofence.putExtra("uid", uid);
+        geofence.setAction("sumsum.gates.vice.hiday");
     }
 
 
@@ -232,14 +239,16 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             requestCallPermission();
         }
         else {
-            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
-            mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent()).addOnCompleteListener(this);
+            mGeofencingClient.removeGeofences(getGeofencePendingIntent(geofence)).addOnCompleteListener(this);
+            mGeofencingClientUpdate.removeGeofences(getGeofencePendingIntent(update)).addOnCompleteListener(this);
+            mGeofencingClient.addGeofences(getGeofencingRequest(mGeofenceList), getGeofencePendingIntent(geofence)).addOnCompleteListener(this);
+            mGeofencingClientUpdate.addGeofences(getGeofencingRequest(mGeofenceListUpdat), getGeofencePendingIntent(update)).addOnCompleteListener(this);
 //            Toast.makeText(this, "Geofences added", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void removeGeofences() {
-            mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+            mGeofencingClient.removeGeofences(getGeofencePendingIntent(geofence)).addOnCompleteListener(this);
     }
 
 
@@ -267,16 +276,11 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
      *
      * @return A PendingIntent for the IntentService that handles geofence transitions.
      */
-    private PendingIntent getGeofencePendingIntent() {
+    private PendingIntent getGeofencePendingIntent(Intent intent) {
         // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-
-        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
-        intent.putExtra("uid", uid);
-        intent.setAction("sumsum.gates.vice.hiday");
-
         //intent.putExtra("number", )
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
 
@@ -287,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
      * This sample hard codes geofence data. A real app might dynamically create geofences based on
      * the user's location.
      */
-    private ArrayList populateGeofenceList() {
+    private ArrayList populateGeofenceList(final Double extra, final Float dis) {
         final ArrayList<Geofence> geofensList = new ArrayList<>();
 
         FirebaseDatabase.getInstance().getReference("UserGatesList")
@@ -295,10 +299,10 @@ public class MainActivity extends AppCompatActivity implements OnCompleteListene
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Double lang = Double.valueOf(postSnapshot.child("lang").getValue().toString());
+                    Double lang = Double.valueOf(postSnapshot.child("lang").getValue().toString()) + extra;
                     Double lat = Double.valueOf(postSnapshot.child("lat").getValue().toString());
                     String phoneNumber = postSnapshot.child("phone").getValue().toString();
-                    Float distance = Float.valueOf(postSnapshot.child("distance").getValue().toString());
+                    Float distance = Float.valueOf(postSnapshot.child("distance").getValue().toString()) + dis;
                     Geofence geofence = new Geofence.Builder().setRequestId(postSnapshot.child("name").getValue().toString())
                             .setCircularRegion(lat, lang, distance)
                             .setExpirationDuration(Geofence.NEVER_EXPIRE)

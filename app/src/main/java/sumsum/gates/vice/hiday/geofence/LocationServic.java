@@ -18,6 +18,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -28,6 +30,8 @@ import java.util.concurrent.Executor;
 
 import sumsum.gates.vice.hiday.MainActivity;
 import sumsum.gates.vice.hiday.R;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 
 public class LocationServic extends IntentService {
@@ -68,65 +72,79 @@ public class LocationServic extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        client = new FusedLocationProviderClient(getApplicationContext());
-        context = getBaseContext();
-        if (intent != null) {
-            LocationRequest request = new LocationRequest();
-            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//GPS
-            request.setInterval(1000);
-            request.setFastestInterval(500);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return START_STICKY;
-            }
-            client.requestLocationUpdates(request, callback /*callback*/, null/*Looper*/);
-            Task<Location> lastLocation = client.getLastLocation();
-            lastLocation.addOnCompleteListener(e, new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    if (task.isSuccessful()) {
-                        Location location = task.getResult();
-                        if (location != null) {
-                            Log.d("hiday", location.toString());
+        GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+
+        if (geofencingEvent.hasError()) {
+            String errorMessage = GeofenceErrorMessages.getErrorString(this,
+                    geofencingEvent.getErrorCode());
+            Log.e(TAG, errorMessage);
+
+            return START_STICKY;
+        }
+
+
+        // Get the transition type.
+        int geofenceTransition = geofencingEvent.getGeofenceTransition();
+
+        // Test that the reported transition was of interest.
+        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+            client = new FusedLocationProviderClient(getApplicationContext());
+            context = getBaseContext();
+            if (intent != null) {
+                LocationRequest request = new LocationRequest();
+                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//GPS
+                request.setInterval(1000);
+                request.setFastestInterval(500);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return START_STICKY;
+                }
+                client.requestLocationUpdates(request, callback /*callback*/, null/*Looper*/);
+                Task<Location> lastLocation = client.getLastLocation();
+                lastLocation.addOnCompleteListener(e, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful()) {
+                            Location location = task.getResult();
+                            if (location != null) {
+                                Log.d("hiday", location.toString());
+                            }
                         }
                     }
-                }
-            });
-        }
-
-
-
-
-
-
-        if (intent.getAction().equals("udate")) {
-            showNotification();
-            Toast.makeText(this, "Service Started!", Toast.LENGTH_SHORT).show();
-
-        } else if (intent.getAction().equals("B")) {
-            Log.i(LOG_TAG, "Clicked Previous");
-            stopSelf();
-            Toast.makeText(this, "Clicked Previous!", Toast.LENGTH_SHORT)
-                    .show();
-        } else if (intent.getAction().equals("C")) {
-            Log.i(LOG_TAG, "Clicked Play");
-
-            Toast.makeText(this, "Clicked Play!", Toast.LENGTH_SHORT).show();
-        } else if (intent.getAction().equals("D")) {
-            Log.i(LOG_TAG, "Clicked Next");
-
-            Toast.makeText(this, "Clicked Next!", Toast.LENGTH_SHORT).show();
-        } else if (intent.getAction().equals("list")) {
-            Log.i(LOG_TAG, "Received Stop Foreground Intent");
-            stopForeground(true);
+                });
+            }} else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
             stopSelf();
         }
+
+
+            if (intent.getAction().equals("udate")) {
+                showNotification();
+                Toast.makeText(this, "Service Started!", Toast.LENGTH_SHORT).show();
+
+            } else if (intent.getAction().equals("B")) {
+                Log.i(LOG_TAG, "Clicked Previous");
+                stopForeground(true);
+                Toast.makeText(this, "Clicked Previous!", Toast.LENGTH_SHORT)
+                        .show();
+            } else if (intent.getAction().equals("C")) {
+                Log.i(LOG_TAG, "Clicked Play");
+
+                Toast.makeText(this, "Clicked Play!", Toast.LENGTH_SHORT).show();
+            } else if (intent.getAction().equals("D")) {
+                Log.i(LOG_TAG, "Clicked Next");
+
+                Toast.makeText(this, "Clicked Next!", Toast.LENGTH_SHORT).show();
+            } else if (intent.getAction().equals("list")) {
+                Log.i(LOG_TAG, "Received Stop Foreground Intent");
+                stopForeground(true);
+                stopSelf();
+            }
         return START_STICKY;
     }
 
@@ -138,10 +156,10 @@ public class LocationServic extends IntentService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
-        Intent previousIntent = new Intent(this, LocationServic.class);
-        previousIntent.setAction("B");
+        Intent stop = new Intent(this, LocationServic.class);
+        stop.setAction("B");
         PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
-                previousIntent, 0);
+                stop, 0);
 
         Intent playIntent = new Intent(this, LocationServic.class);
         playIntent.setAction("C");
@@ -164,12 +182,8 @@ public class LocationServic extends IntentService {
                 .setLargeIcon(icon)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
-                .addAction(android.R.drawable.ic_media_previous, "Quit",
+                .addAction(android.R.drawable.ic_lock_power_off, "Quit",
                         ppreviousIntent)
-                .addAction(android.R.drawable.ic_media_play, "Play",
-                        pplayIntent)
-                .addAction(android.R.drawable.ic_media_next, "Next",
-                        pnextIntent)
                 .build();
         startForeground(101, notification);
 

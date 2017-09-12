@@ -106,7 +106,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             sendNotification(from + speed);
 
-            if (speed > 15000.95) {
+            if (speed > 1.95) {
 
                 getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences);
                 makeCall(phone);
