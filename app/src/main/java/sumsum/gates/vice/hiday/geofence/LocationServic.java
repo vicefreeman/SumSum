@@ -141,9 +141,9 @@ public class LocationServic extends IntentService {
                 R.drawable.sumsumicon);
 
         Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Sumsum is running")
+                .setContentTitle("Need to open the Gate?")
                 .setTicker("TutorialsFace Music Player")
-                .setContentText("To app")
+                .setContentText("Click for SumSum")
                 .setSmallIcon(R.drawable.sumsumicon)
                 .setLargeIcon(icon)
                 .setContentIntent(pendingIntent)

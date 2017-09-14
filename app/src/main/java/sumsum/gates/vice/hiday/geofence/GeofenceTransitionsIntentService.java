@@ -107,7 +107,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
-            sendNotification(from + speed);
+            //sendNotification(from + speed);
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

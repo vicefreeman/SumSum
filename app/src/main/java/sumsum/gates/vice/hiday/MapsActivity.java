@@ -199,6 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     map.clear();
                     marker =null;
                     Toast.makeText(MapsActivity.this, "Cleared all markers", Toast.LENGTH_SHORT).show();
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                 } else {
                     marker = map.addMarker(new MarkerOptions()
                             .position(latLng).title("My Gate").snippet("Is here")
@@ -232,6 +233,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         }
                     });
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
                 }
                 hasMarker = true;
             }
