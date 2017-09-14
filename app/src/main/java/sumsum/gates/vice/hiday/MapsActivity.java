@@ -110,12 +110,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            latLng = new LatLng(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()
-                    , locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation == null) {
+                    latLng = new LatLng(32.0844269,34.8029073);
+                }else {
+                    latLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                }
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
-            edit.putString("lat", String.valueOf(latLng.latitude));
-            edit.putString("lng", String.valueOf(latLng.longitude));
-            edit.commit();
             marker = map.addMarker(new MarkerOptions()
                     .position(latLng).title("My Gate").snippet("Is here")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
@@ -128,6 +129,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .fillColor(Color.argb(100, 0, 188, 212))
                     .strokeWidth(8).clickable(true);
             circleOptions.center(latLng);
+            edit.putString("lat", String.valueOf(marker.getPosition().latitude));
+            edit.putString("lng", String.valueOf(marker.getPosition().latitude));
+            edit.commit();
             mCircle =  map.addCircle(circleOptions);
             map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
@@ -179,7 +183,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-
+                    edit.putString("lat", String.valueOf(marker.getPosition().latitude));
+                    edit.putString("lng", String.valueOf(marker.getPosition().longitude));
+                    edit.commit();
                 }
             });
 
@@ -206,6 +212,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .fillColor(Color.argb(100, 0, 188, 212))
                             .strokeWidth(8).clickable(true);
                     circleOptions.center(latLng);
+                    edit.putString("lat", String.valueOf(latLng.latitude));
+                    edit.putString("lng", String.valueOf(latLng.longitude));
+                    edit.commit();
                     mCircle = map.addCircle(circleOptions);
                     map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                         @Override

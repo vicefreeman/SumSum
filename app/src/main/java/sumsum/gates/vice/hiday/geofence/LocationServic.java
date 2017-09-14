@@ -19,13 +19,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import sumsum.gates.vice.hiday.MainActivity;
@@ -53,10 +58,11 @@ public class LocationServic extends IntentService {
     LocationCallback callback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-           l = locationResult.getLastLocation();
+            l = locationResult.getLastLocation();
 
         }
     };
+
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -72,79 +78,49 @@ public class LocationServic extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
 
-        if (geofencingEvent.hasError()) {
-            String errorMessage = GeofenceErrorMessages.getErrorString(this,
-                    geofencingEvent.getErrorCode());
-            Log.e(TAG, errorMessage);
-
-            return START_STICKY;
-        }
-
-
-        // Get the transition type.
-        int geofenceTransition = geofencingEvent.getGeofenceTransition();
-
-        // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-            client = new FusedLocationProviderClient(getApplicationContext());
-            context = getBaseContext();
-            if (intent != null) {
-                LocationRequest request = new LocationRequest();
-                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//GPS
-                request.setInterval(1000);
-                request.setFastestInterval(500);
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return START_STICKY;
-                }
-                client.requestLocationUpdates(request, callback /*callback*/, null/*Looper*/);
-                Task<Location> lastLocation = client.getLastLocation();
-                lastLocation.addOnCompleteListener(e, new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            Location location = task.getResult();
-                            if (location != null) {
-                                Log.d("hiday", location.toString());
-                            }
+        client = new FusedLocationProviderClient(getApplicationContext());
+        context = getBaseContext();
+        if (intent != null) {
+            LocationRequest request = new LocationRequest();
+            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//GPS
+            request.setInterval(1000);
+            request.setFastestInterval(500);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return START_STICKY;
+            }
+            client.requestLocationUpdates(request, callback /*callback*/, null/*Looper*/);
+            Task<Location> lastLocation = client.getLastLocation();
+            lastLocation.addOnCompleteListener(e, new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    if (task.isSuccessful()) {
+                        Location location = task.getResult();
+                        Toast.makeText(getApplicationContext(), "speed = " + location.getSpeed(), Toast.LENGTH_SHORT).show();
+                        if (location != null) {
+                            Log.d("hiday", location.toString());
                         }
                     }
-                });
-            }} else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT){
-            stopSelf();
+                }
+            });
         }
 
+        if (intent.getAction().equals("udate")) {
+            showNotification();
+            Toast.makeText(this, "Service Started!", Toast.LENGTH_SHORT).show();
 
-            if (intent.getAction().equals("udate")) {
-                showNotification();
-                Toast.makeText(this, "Service Started!", Toast.LENGTH_SHORT).show();
-
-            } else if (intent.getAction().equals("B")) {
-                Log.i(LOG_TAG, "Clicked Previous");
-                stopForeground(true);
-                Toast.makeText(this, "Clicked Previous!", Toast.LENGTH_SHORT)
-                        .show();
-            } else if (intent.getAction().equals("C")) {
-                Log.i(LOG_TAG, "Clicked Play");
-
-                Toast.makeText(this, "Clicked Play!", Toast.LENGTH_SHORT).show();
-            } else if (intent.getAction().equals("D")) {
-                Log.i(LOG_TAG, "Clicked Next");
-
-                Toast.makeText(this, "Clicked Next!", Toast.LENGTH_SHORT).show();
-            } else if (intent.getAction().equals("list")) {
-                Log.i(LOG_TAG, "Received Stop Foreground Intent");
-                stopForeground(true);
-                stopSelf();
-            }
+        } else if (intent.getAction().equals("stop")) {
+            stopForeground(true);
+            Toast.makeText(this, "Service stoped!", Toast.LENGTH_SHORT)
+                    .show();
+        }
         return START_STICKY;
     }
 
@@ -157,19 +133,9 @@ public class LocationServic extends IntentService {
                 notificationIntent, 0);
 
         Intent stop = new Intent(this, LocationServic.class);
-        stop.setAction("B");
-        PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
+        stop.setAction("stop");
+        PendingIntent quit = PendingIntent.getService(this, 0,
                 stop, 0);
-
-        Intent playIntent = new Intent(this, LocationServic.class);
-        playIntent.setAction("C");
-        PendingIntent pplayIntent = PendingIntent.getService(this, 0,
-                playIntent, 0);
-
-        Intent nextIntent = new Intent(this, LocationServic.class);
-        nextIntent.setAction("D");
-        PendingIntent pnextIntent = PendingIntent.getService(this, 0,
-                nextIntent, 0);
 
         Bitmap icon = BitmapFactory.decodeResource(getResources(),
                 R.drawable.sumsumicon);
@@ -183,7 +149,7 @@ public class LocationServic extends IntentService {
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .addAction(android.R.drawable.ic_lock_power_off, "Quit",
-                        ppreviousIntent)
+                        quit)
                 .build();
         startForeground(101, notification);
 
@@ -201,5 +167,6 @@ public class LocationServic extends IntentService {
         // Used only in case if services are bound (Bound Services).
         return null;
     }
+
 }
 

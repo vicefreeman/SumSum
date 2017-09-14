@@ -20,7 +20,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <service android:name=".geofence.GeofenceTransitionsIntentService" />
+        <service android:name=".geofence.LocationServic"/>
 
         <activity
             android:name=".MainActivity"
@@ -60,7 +62,7 @@
             android:label="Create a custom Gate"
             android:screenOrientation="portrait" />
 
-        <service android:name=".geofence.LocationServic" android:exported="false"></service>
+
     </application>
 
 </manifest>

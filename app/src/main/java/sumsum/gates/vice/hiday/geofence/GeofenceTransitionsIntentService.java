@@ -82,6 +82,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+        Intent update = new Intent(this , LocationServic.class);
+        update.setAction("udate");
+        startService(update);
         getSpeed();
 
         preferences = getSharedPreferences("shred", Context.MODE_PRIVATE);
@@ -105,12 +108,20 @@ public class GeofenceTransitionsIntentService extends IntentService {
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
             sendNotification(from + speed);
-
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            getSpeed();
             if (speed > 1.95) {
 
                 getGeofenceTransitionDetails(geofenceTransition, triggeringGeofences);
                 makeCall(phone);
             }
+        }else {
+            Intent stop = new Intent(this , LocationServic.class);
+            stopService(stop);
         }
     }
 
